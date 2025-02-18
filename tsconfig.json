@@ -1,4 +1,18 @@
 {
   "files": [],
+  "compilerOptions": {
+    "allowJs": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "types": [
+      "vite/client"
+    ],
+    "target": "es5",
+    "lib": [
+      "es2017"
+    ]
+  },
   "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
 }
