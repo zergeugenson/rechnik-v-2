@@ -7,13 +7,13 @@ const router = createRouter({
     {
       path: '/',
       component: AppLayout,
-      // children: [
-      //   {
-      //     path: '/',
-      //     name: 'Dash',
-      //     component: () => import('@/views/pages/Dashboard.vue')
-      //   },
-      // ]
+      children: [
+        {
+          path: '/',
+          name: 'Dash',
+          component: () => import('@/views/Cards.vue')
+        },
+      ]
     },
   ]
 });

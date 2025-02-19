@@ -9,7 +9,6 @@ import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
 import primevueLocale from '/utils/primevueLocale';
 
-
 import Button from 'primevue/button';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';

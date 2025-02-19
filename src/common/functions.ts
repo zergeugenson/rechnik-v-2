@@ -9,4 +9,23 @@ function isNotEmpty(obj: any) {
   return obj && typeof obj === 'object' && Object.keys(obj).length !== 0;
 }
 
-export { formatDate, isNotEmpty };
+const ucFirst = (str: string) => {
+  if (!str) return str;
+  return str[0].toUpperCase() + str.slice(1);
+}
+
+const shaffle = (array: any) => {
+  let currentIndex = array.length,
+      randomIndex;
+  while (currentIndex != 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex]
+    ];
+  }
+  return array;
+};
+
+export { formatDate, isNotEmpty, shaffle, ucFirst };
