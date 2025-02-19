@@ -14,7 +14,7 @@ const ucFirst = (str: string) => {
   return str[0].toUpperCase() + str.slice(1);
 }
 
-const shaffle = (array: any) => {
+const shaffleArray = (array: any) => {
   let currentIndex = array.length,
       randomIndex;
   while (currentIndex != 0) {
@@ -28,4 +28,27 @@ const shaffle = (array: any) => {
   return array;
 };
 
-export { formatDate, isNotEmpty, shaffle, ucFirst };
+const serbianLC = (str: string) => {
+  return Array.from(str).reduce((word, letter) => {
+    switch (letter) {
+      case "C":
+        letter = "ć";
+        break;
+      case "D":
+        letter = "đ";
+        break;
+      case "S":
+        letter = "ŝ";
+        break;
+      case "Z":
+        letter = "ž";
+    }
+    // ć U+0107 &#263;
+    // đ U+0111 &#273;
+    // ŝ U+015D &#349;
+    // ž U+017D &#382;
+    return (word += letter);
+  }, "");
+};
+
+export { formatDate, isNotEmpty, shaffleArray, ucFirst, serbianLC };

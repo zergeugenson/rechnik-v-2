@@ -1,67 +1,35 @@
 <script setup lang="ts">
 //I9UZB7EukaGizTaAfND8ABvgASj8kWfm
 import { ref, computed, onMounted } from 'vue';
-import { shaffle } from "@/common/functions.js";
+import { shaffleArray, serbianLC } from "@/common/functions.js";
 import { useGlobalStore } from '@/stores/global';
 
 const globalStore = useGlobalStore();
 
-const SerbLowerCase = (str: string) => {
-  return Array.from(str).reduce((word, letter) => {
-    switch (letter) {
-      case "C":
-        letter = "ć";
-        break;
-      case "D":
-        letter = "đ";
-        break;
-      case "S":
-        letter = "ŝ";
-        break;
-      case "Z":
-        letter = "ž";
-    }
-    // ć U+0107 &#263;
-    // đ U+0111 &#273;
-    // ŝ U+015D &#349;
-    // ž U+017D &#382;
-    return (word += letter);
-  }, "");
-};
-
 const visualDictionary = ref([]);
-const newWord = ref( { srb: '', rus: '', eng: '' });
-const adding = ref<boolean>(false);
+const inputNewWord = ref( { srb: '', rus: '', eng: '' });
+const isAdding = ref<boolean>(false);
 const funnyPictureSrc = ref<string>('');
-const q_lang = ref('srb');
-const c_lang = ref('rus');
-const error = ref<boolean>(false)
-const showReply = ref<boolean>(false);
+const questionLanguage = ref('srb');
+const currentLanguage = ref('rus');
+const userInputError = ref<boolean>(false)
+const showUserReply = ref<boolean>(false);
 const startNewLap = ref<boolean>(false);
 
-const rechnik = computed( () => {
-      return globalStore.getShaffledRechnik();
-    });
-
-const getData = () => {
-  Promise.all([globalStore.getFullDictionary(), globalStore.getHiddenDictionary()]).then(() => {
-    visualDictionary.value = [...rechnik.value]
-    fireNextWord();
-  }).catch(error => {
-    console.error("Ошибка получения данных", error)
-  })
-}
+const userDictionary = computed( () => {
+  return globalStore.getShaffledDictionary();
+});
 
 const fireNextWord = () => {
-  showReply.value = false;
+  showUserReply.value = false;
   if (!visualDictionary.value.length) {
     startNewLap.value = true;
     setTimeout(() => {
-      visualDictionary.value = [...globalStore.getShaffledRechnik()];
+      visualDictionary.value = [...userDictionary.value];
       startNewLap.value = false;
     }, 1600);
   }
-  visualDictionary.value = shaffle(visualDictionary.value);
+  visualDictionary.value = shaffleArray(visualDictionary.value);
   getFunnyPicture();
 };
 
@@ -83,22 +51,22 @@ async function getFunnyPicture() {
 }
 
 const setLanguage = (lang) => {
-  q_lang.value = "srb";
-  c_lang.value = "rus";
+  questionLanguage.value = "srb";
+  currentLanguage.value = "rus";
   if (lang === "rus") {
-    q_lang.value = "rus";
-    c_lang.value = "srb";
+    questionLanguage.value = "rus";
+    currentLanguage.value = "srb";
   }
 };
 
 const closeAdditionWindow = () => {
-  error.value = false;
-  adding.value = false;
-  visualDictionary.value = [...rechnik.value];
+  userInputError.value = false;
+  isAdding.value = false;
+  visualDictionary.value = [...userDictionary.value];
 };
 
 const userResponse = (rightAnswer) => {
-  showReply.value = true;
+  showUserReply.value = true;
   if (rightAnswer) {
     setTimeout(() => {
       visualDictionary.value.splice(0, 1);
@@ -113,60 +81,57 @@ async function hideWord (id) {
   } else {
     globalStore.hiddenWords.push(id);
   }
-  await globalStore.hideWord();
-  fireNextWord();
+  const success = await globalStore.hideWord();
+  if (success?.length) {
+    fireNextWord();
+  } else {
+    console.error("Ошибка: слово не спрятано");
+  }
 }
 
 async function addWord() {
-  if (!newWord.value.srb || !newWord.value.rus) {
-    error.value = true;
+  if (!inputNewWord.value.srb || !inputNewWord.value.rus) {
+    userInputError.value = true;
     return;
   }
 
   globalStore.allWords.push( {
-    srb: SerbLowerCase(newWord.value.srb),
-    rus: newWord.value.rus,
-    eng: newWord.value.eng,
+    srb: serbianLC(inputNewWord.value.srb),
+    rus: inputNewWord.value.rus,
+    eng: inputNewWord.value.eng,
     id: Date.now()
   });
 
   const success = await globalStore.addWord();
-  if (success) {
-    newWord.value = { srb: "", rus: "", eng: "" };
-    error.value = false;
+  if (success?.length) {
+    inputNewWord.value = { srb: "", rus: "", eng: "" };
+    userInputError.value = false;
   } else {
     console.error("Ошибка записи словаря");
   }
+}
+
+const getData = () => {
+  Promise.all([globalStore.getFullDictionary(), globalStore.getHiddenDictionary()]).then(() => {
+    visualDictionary.value = [...userDictionary.value]
+    fireNextWord();
+  }).catch(error => {
+    console.error("Ошибка получения данных", error)
+  })
 }
 
 onMounted(() => {
   getData();
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </script>
 
 <template>
   <div class="rechnik-page">
-<!--    <img src="@/assets/vue.svg" class="logo vue" alt="Vue logo" />-->
-    <div class="loader-container" v-show="!adding && startNewLap">
+    <div class="loader-container" v-show="!isAdding && startNewLap">
       <div class="loader">...</div>
     </div>
-    <div v-if="!adding">
+    <div v-if="!isAdding">
       <div class="control-bar">
         <div>
           <button
@@ -180,18 +145,18 @@ onMounted(() => {
           <button
             @click="setLanguage('rus')"
             class="small-button default"
-            :disabled="q_lang === 'rus'"
+            :disabled="questionLanguage === 'rus'"
           >
             rus
           </button>
           <button
             @click="setLanguage('srb')"
             class="small-button default"
-            :disabled="q_lang === 'srb'"
+            :disabled="questionLanguage === 'srb'"
           >
             srb
           </button>
-          <button @click="adding = true" class="small-button danger">
+          <button @click="isAdding = true" class="small-button danger">
             add
           </button>
         </div>
@@ -212,16 +177,16 @@ onMounted(() => {
       </div>
 
       <div v-if="visualDictionary && visualDictionary.length">
-        <h3 class="question">{{ visualDictionary[0][c_lang] }}</h3>
+        <h3 class="question">{{ visualDictionary[0][currentLanguage] }}</h3>
         <div class="reply">
           <h3 class="reply-input">
-            <span v-if="showReply">{{ visualDictionary[0][q_lang] }}</span>
+            <span v-if="showUserReply">{{ visualDictionary[0][questionLanguage] }}</span>
             &nbsp;
           </h3>
-          <button @click="userResponse(false)" class="default" :disabled="showReply">
+          <button @click="userResponse(false)" class="default" :disabled="showUserReply">
             Напомни
           </button>
-          <button @click="userResponse(true)" v-if="!showReply" class="sucsess">
+          <button @click="userResponse(true)" v-if="!showUserReply" class="sucsess">
             Помню
           </button>
           <button @click="fireNextWord()" class="default" v-else>
@@ -241,19 +206,19 @@ onMounted(() => {
       <input
         type="text"
         placeholder="По-сербски"
-        v-model="newWord.srb"
-        :class="['reply-input', { error: error }]"
+        v-model="inputNewWord.srb"
+        :class="['reply-input', { error: userInputError }]"
       />
       <input
         type="text"
         placeholder="По-русски"
-        v-model="newWord.rus"
-        :class="['reply-input', { error: error }]"
+        v-model="inputNewWord.rus"
+        :class="['reply-input', { error: userInputError }]"
       />
       <input
         type="text"
         placeholder="По-английски"
-        v-model="newWord.eng"
+        v-model="inputNewWord.eng"
         style="margin-bottom: 50px;"
       />
       <button @click="addWord">Сохранить</button>
@@ -265,7 +230,6 @@ onMounted(() => {
 <style scoped lang="scss">
 .rechnik-page {
   position: relative;
-  padding: 15px;
   max-width: 640px;
   margin: auto;
   min-height: 500px;

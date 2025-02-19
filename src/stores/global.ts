@@ -1,19 +1,18 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { shaffle } from "@/common/functions.js";
+import { shaffleArray } from "@/common/functions.js";
 import useFetch from '@/api/myFetsh';
 
+export const baseURL = !import.meta.env.DEV ? 'http://localhost:5173' : 'http://pda.hromov.com'; //window.location.origin;
 
 export const useGlobalStore = defineStore('global', () => {
 
-  const baseURL = !import.meta.env.DEV ? 'http://localhost:5173' : 'http://pda.hromov.com'; //window.location.origin;
-
+  // Store
   const allWords = ref<any>([]);
   const hiddenWords = ref<any>([]);
   const grammarRules = ref<any>({});
-  const isLoading = ref<boolean>(false);
 
-
+  // Actions
   async function getFullDictionary () {
     const { error, data, statusCode, onFetchError } = await useFetch(`${baseURL}/assets/data.json`, { immediate: true }).json();
     if(data?.value) {
@@ -56,23 +55,24 @@ export const useGlobalStore = defineStore('global', () => {
         body: JSON.stringify(allWords.value),
         headers: { "Content-type": "application/json; charset=UTF-8" }
       });
-      await response.json();
+      return await response.json();
     } catch (error) {
       console.error(error);
     }
   }
 
-  function getRechnik() {
+  // Getters
+  const getDictionary = () => {
     return allWords?.value.filter(word => {
       if (!hiddenWords.value.includes(word.id)) return word;
-    });
+    }) || [];
   }
 
-  function getShaffledRechnik() {
-    return shaffle(getRechnik());
+  const getShaffledDictionary = () => {
+    return shaffleArray(getDictionary());
   }
 
-  //Метод для показа нотификации из любого места
+  // Notifications
   const showMessage = ref({ severity: 'error', summary: '', detail: '', life: 3000 });
   const setShowMessage = (severity = 'error', summary = '', detail = '', life = 3000) => {
     showMessage.value = { severity, summary, detail, life };
@@ -86,8 +86,6 @@ export const useGlobalStore = defineStore('global', () => {
     showMessage.value = { severity: 'error', summary: 'Ошибка', detail: detail, life: 10000 };
   };
 
-
-
   return {
     showMessage,
     allWords,
@@ -95,7 +93,7 @@ export const useGlobalStore = defineStore('global', () => {
     grammarRules,
     setShowMessage,
     showError,
-    getShaffledRechnik,
+    getShaffledDictionary,
     getFullDictionary,
     getHiddenDictionary,
     hideWord,
