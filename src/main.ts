@@ -3,30 +3,30 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia'
 import router from "./router"
-import './style.css';
+import '@/style.css';
+import '@/assets/styles/index.scss';
 import App from './App.vue';
 import PrimeVue from 'primevue/config';
-import Aura from '@primevue/themes/aura';
+import material from '@primevue/themes/aura';
 import primevueLocale from '/utils/primevueLocale';
 
 import Button from 'primevue/button';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
 
-const pinia = createPinia();
 const app = createApp(App);
 
+const pinia = createPinia();
 app.use(pinia);
+
 app.use(PrimeVue, {
     ripple: true,
     locale: primevueLocale,
     theme: {
-        preset: Aura
+        preset: material
     }
 });
-
 app.use(ToastService);
-
 app.component('Button', Button);
 app.component('Toast', Toast);
 

@@ -11,14 +11,14 @@ export default defineConfig(({ mode }) => {
         '@': fileURLToPath(new URL('./src', import.meta.url))
       }
     },
-    server: {
-      proxy: {
-        '/proxy': {
-          target: env.VITE_BASE_URL,
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/proxy/, '')
-        }
-      }
-    }
+    // server: {
+    //   proxy: {
+    //     '/proxy': {
+    //       target: env.VITE_BASE_URL,
+    //       changeOrigin: true,
+    //       rewrite: (path) => path.replace(/^\/proxy/, '')
+    //     }
+    //   }
+    // }
   };
 });
