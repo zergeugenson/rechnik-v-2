@@ -3,8 +3,10 @@
 import { ref, computed, onMounted } from 'vue';
 import { shaffleArray, serbianLC } from "@/common/functions.js";
 import { useGlobalStore } from '@/stores/global';
+import { useRouter } from "vue-router";
 
 const globalStore = useGlobalStore();
+const $router = useRouter();
 
 const visualDictionary = ref([]);
 const inputNewWord = ref( { srb: '', rus: '', eng: '' });
@@ -136,7 +138,7 @@ onMounted(() => {
         <div>
           <button
             class="small-button grammar"
-            @click="$router.push({ name: 'Grammar' })"
+            @click="$router.push('/grammar')"
           >
             grammar
           </button>

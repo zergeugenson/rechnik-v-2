@@ -14,23 +14,34 @@ export const useGlobalStore = defineStore('global', () => {
 
   // Actions
   async function getFullDictionary () {
-    const { error, data, statusCode, onFetchError } = await useFetch(`${baseURL}/assets/data.json`, { immediate: true }).json();
+    const { data, statusCode, onFetchError } = await useFetch(`${baseURL}/assets/data.json`, { immediate: true }).json();
     if(data?.value) {
       allWords.value = data.value;
     }
     onFetchError(() => {
-      setShowMessage('error', 'Ошибка', `Код ошибки: ${statusCode.value}`, 7000);
+      setShowMessage('error', 'Ошибка получения словаря', `Код ошибки: ${statusCode.value}`, 7000);
     });
     return data.value
   }
 
   async function getHiddenDictionary () {
-    const { error, data, statusCode, onFetchError } = await useFetch(`${baseURL}/assets/hide.json`, { immediate: true }).json();
+    const { data, statusCode, onFetchError } = await useFetch(`${baseURL}/assets/hide.json`, { immediate: true }).json();
     if(data?.value) {
       hiddenWords.value = data.value;
     }
     onFetchError(() => {
-      setShowMessage('error', 'Ошибка', `Код ошибки: ${statusCode.value}`, 7000);
+      setShowMessage('error', 'Ошибка получения спрятанных слов', `Код ошибки: ${statusCode.value}`, 7000);
+    });
+    return data.value
+  }
+
+  async function getGrammar () {
+    const { data, statusCode, onFetchError } = await useFetch(`${baseURL}/assets/grammar.json`, { immediate: true }).json();
+    if(data?.value) {
+      grammarRules.value = data.value;
+    }
+    onFetchError(() => {
+      setShowMessage('error', 'Ошибка файла грамматики', `Код ошибки: ${statusCode.value}`, 7000);
     });
     return data.value
   }
@@ -98,5 +109,6 @@ export const useGlobalStore = defineStore('global', () => {
     getHiddenDictionary,
     hideWord,
     addWord,
+    getGrammar,
   };
 });

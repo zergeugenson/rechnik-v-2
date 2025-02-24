@@ -13,6 +13,11 @@ const router = createRouter({
           name: 'Dash',
           component: () => import('@/views/Cards.vue')
         },
+        {
+          path: '/grammar',
+          name: 'Grammar',
+          component: () => import('@/views/Grammar.vue')
+        }
       ]
     },
   ]
