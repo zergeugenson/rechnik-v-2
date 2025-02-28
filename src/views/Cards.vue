@@ -9,12 +9,12 @@ const globalStore = useGlobalStore();
 const $router = useRouter();
 
 const visualDictionary = ref([]);
-const inputNewWord = ref( { srb: '', rus: '', eng: '' });
+
 const isAdding = ref<boolean>(false);
 const funnyPictureSrc = ref<string>('');
 const questionLanguage = ref('srb');
 const currentLanguage = ref('rus');
-const userInputError = ref<boolean>(false)
+
 const showUserReply = ref<boolean>(false);
 const startNewLap = ref<boolean>(false);
 
@@ -91,27 +91,7 @@ async function hideWord (id) {
   }
 }
 
-async function addWord() {
-  if (!inputNewWord.value.srb || !inputNewWord.value.rus) {
-    userInputError.value = true;
-    return;
-  }
 
-  globalStore.allWords.push( {
-    srb: serbianLC(inputNewWord.value.srb),
-    rus: inputNewWord.value.rus,
-    eng: inputNewWord.value.eng,
-    id: Date.now()
-  });
-
-  const success = await globalStore.addWord();
-  if (success?.length) {
-    inputNewWord.value = { srb: "", rus: "", eng: "" };
-    userInputError.value = false;
-  } else {
-    console.error("Ошибка записи словаря");
-  }
-}
 
 const getData = () => {
   Promise.all([globalStore.getFullDictionary(), globalStore.getHiddenDictionary()]).then(() => {
@@ -129,20 +109,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="rechnik-page">
-    <div class="loader-container" v-show="!isAdding && startNewLap">
-      <div class="loader">...</div>
+  <div class="cards-page">
+    <div class="loader" v-show="!isAdding && startNewLap">
+      <div class="loader__container">...</div>
     </div>
+
+
+
+
     <div v-if="!isAdding">
       <div class="control-bar">
-        <div>
-          <button
-            class="small-button grammar"
-            @click="$router.push('/grammar')"
-          >
-            grammar
-          </button>
-        </div>
+
         <div>
           <button
             @click="setLanguage('rus')"
@@ -157,9 +134,6 @@ onMounted(() => {
             :disabled="questionLanguage === 'srb'"
           >
             srb
-          </button>
-          <button @click="isAdding = true" class="small-button danger">
-            add
           </button>
         </div>
       </div>
@@ -204,33 +178,11 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <div v-else class="adding">
-      <input
-        type="text"
-        placeholder="По-сербски"
-        v-model="inputNewWord.srb"
-        :class="['reply-input', { error: userInputError }]"
-      />
-      <input
-        type="text"
-        placeholder="По-русски"
-        v-model="inputNewWord.rus"
-        :class="['reply-input', { error: userInputError }]"
-      />
-      <input
-        type="text"
-        placeholder="По-английски"
-        v-model="inputNewWord.eng"
-        style="margin-bottom: 50px;"
-      />
-      <button @click="addWord">Сохранить</button>
-      <button @click="closeAdditionWindow">Закончить</button>
-    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-.rechnik-page {
+.cards-page {
   position: relative;
   max-width: 640px;
   margin: auto;
@@ -244,10 +196,7 @@ onMounted(() => {
       display: inline-block;
     }
   }
-  .adding {
-    text-align: center;
-    padding-top: 50px;
-  }
+
   .picture {
     width: 100%;
     height: 200px;
@@ -272,7 +221,7 @@ onMounted(() => {
       font-weight: 400;
     }
   }
-  .loader-container {
+  .loader {
     border: 1px solid rgba(255, 255, 255, 0.2);
     float: left;
     overflow: hidden;
@@ -284,13 +233,13 @@ onMounted(() => {
     width: 100%;
     height: 100%;
   }
-  .loader,
-  .loader:after {
+  .loader-container,
+  .loader-container:after {
     border-radius: 50%;
     width: 10em;
     height: 10em;
   }
-  .loader {
+  .loader-container {
     margin: calc(50% - 100px) auto;
     font-size: 10px;
     position: relative;

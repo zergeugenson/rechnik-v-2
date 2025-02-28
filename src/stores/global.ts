@@ -11,6 +11,7 @@ export const useGlobalStore = defineStore('global', () => {
   const allWords = ref<any>([]);
   const hiddenWords = ref<any>([]);
   const grammarRules = ref<any>({});
+  const isAdding = ref<boolean>(false);
 
   // Actions
   async function getFullDictionary () {
@@ -72,6 +73,10 @@ export const useGlobalStore = defineStore('global', () => {
     }
   }
 
+  const setIsAdding = (value) => {
+    isAdding.value = value;
+  }
+
   // Getters
   const getDictionary = () => {
     return allWords?.value.filter(word => {
@@ -110,5 +115,7 @@ export const useGlobalStore = defineStore('global', () => {
     hideWord,
     addWord,
     getGrammar,
+    isAdding,
+    setIsAdding,
   };
 });
