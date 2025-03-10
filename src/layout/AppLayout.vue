@@ -122,12 +122,6 @@ watch(
 </template>
 
 <style lang="scss">
-.layout-wrapper {
-  max-height: calc(100vh - 2rem);
-  @include fmob {
-    max-height: unset;
-  }
-}
 .app-body {
   max-height: 100%;
   overflow: hidden;

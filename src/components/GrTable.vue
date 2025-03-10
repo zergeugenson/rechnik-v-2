@@ -7,12 +7,12 @@ const props = defineProps({
   rootClass: { type: String, default: "" }
 });
 const cols = computed( () => {
-  return props?.data[0].length;
+  return props?.data[0]?.length;
 });
 </script>
 
 <template>
-  <table v-if="cols" :class="['gr-table', [rootClass]]">
+  <table v-if="cols" :class="['gr-table', [rootClass]]" class="mt-3">
     <tr>
       <th :colspan="cols" v-html="header" />
     </tr>
@@ -28,19 +28,6 @@ const cols = computed( () => {
 </template>
 
 <style lang="scss">
-$font-size: 1rem;
-$background-color: white;
-$font-color: #dae0e0;
-$page-width: auto;
-$grey: #605E5A;
-$danger-button: red;
-$red: #dd2234;
-$green: #28a745;
-$milky: #dbdbdb;
-$white: #ffffff;
-$yellow: #feb300;
-$blue: #0366ee;
-$margenta: #4713AFFF;
 table.gr-table tr td {
   span {
     background: $yellow;
@@ -61,24 +48,12 @@ table.gr-table tr th {
 </style>
 
 <style scoped lang="scss">
-$font-size: 1rem;
-$background-color: white;
-$font-color: #dae0e0;
-$page-width: auto;
-$grey: #605E5A;
-$danger-button: red;
-$red: #dd2234;
-$green: #28a745;
-$milky: #dbdbdb;
-$white: #ffffff;
-$yellow: #feb300;
-$blue: #0366ee;
-$margenta: #4713AFFF;
+
 table {
   border: none;
-  padding: 0;
-  margin: 0;
   border-collapse: collapse;
+  width: 100%;
+  max-width: 640px;
   th {
     border: 1px solid $grey;
     background: $grey;
@@ -88,7 +63,8 @@ table {
   }
   td {
     border: 1px solid $grey;
-    font-size: 0.9em;
+    font-size: 0.9rem;
+    padding: 0.3rem;
     &.subhead {
       font-weight: 700;
     }
