@@ -4,7 +4,6 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia'
 import router from "./router"
 import '@/style.css';
-import '@/assets/styles/index.scss';
 import 'primeicons/primeicons.css'
 import App from './App.vue';
 import PrimeVue from 'primevue/config';

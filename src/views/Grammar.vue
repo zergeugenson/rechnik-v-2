@@ -17,7 +17,7 @@ onMounted(() => {
 
 <template>
   <div class="grammar-page" v-if="grammar.padez">
-    <button class="small-button cards" @click="$router.push('/')">
+    <button class="small-button cards" @click="$router.push('/')" size="small">
       cards
     </button>
     <h2>Падежи</h2>
@@ -66,7 +66,6 @@ onMounted(() => {
 
 <style scoped lang="scss">
 $font-size: 1rem;
-$font-family: 'Inter', sans-serif;
 $background-color: white;
 $font-color: #dae0e0;
 $page-width: auto;

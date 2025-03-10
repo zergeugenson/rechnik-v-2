@@ -12,6 +12,13 @@ export default defineConfig(({ mode }) => {
         '@': fileURLToPath(new URL('./src', import.meta.url))
       }
     },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: '@import "@/assets/styles/variables.scss"; @import "@/assets/styles/index.scss";',
+        },
+      },
+    },
     // server: {
     //   proxy: {
     //     '/proxy': {

@@ -1,5 +1,4 @@
 $font-size: 1rem;
-$font-family: 'Inter', sans-serif;
 $background-color: white;
 $font-color: #dae0e0;
 $page-width: auto;
@@ -12,3 +11,21 @@ $white: #ffffff;
 $yellow: #feb300;
 $blue: #0366ee;
 $margenta: #4713AFFF;
+
+@mixin fmob {
+  @media screen and (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin ftab {
+  @media screen and (min-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin fdesk {
+  @media screen and (min-width: 1280px) {
+    @content;
+  }
+}

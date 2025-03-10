@@ -29,7 +29,6 @@ const cols = computed( () => {
 
 <style lang="scss">
 $font-size: 1rem;
-$font-family: 'Inter', sans-serif;
 $background-color: white;
 $font-color: #dae0e0;
 $page-width: auto;
@@ -63,7 +62,6 @@ table.gr-table tr th {
 
 <style scoped lang="scss">
 $font-size: 1rem;
-$font-family: 'Inter', sans-serif;
 $background-color: white;
 $font-color: #dae0e0;
 $page-width: auto;

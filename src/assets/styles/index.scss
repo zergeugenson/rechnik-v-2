@@ -1,40 +1,11 @@
-@font-face {
-  font-family: 'Inter';
-  src: url('fonts/Inter.ttf');
-}
 
-$font-size: 1rem;
-$font-family: 'Inter', sans-serif;
-$background-color: white;
-$font-color: #dae0e0;
-$page-width: auto;
-$grey: #605E5A;
-$danger-button: red;
-$red: #dd2234;
-$green: #28a745;
-$milky: #dbdbdb;
-$white: #ffffff;
-$yellow: #feb300;
-$blue: #0366ee;
-$margenta: #4713AFFF;
-
-.root-container {
-  .small-button {
-    border: none;
-    font-size: 12px;
-    padding: 4px 5px;
-    margin: 10px 3px;
-  }
-  button {
-    &.button-hide {
-      background: $grey;
-    }
-    &.on {
-      opacity: 0.3;
-    }
-    &.grammar,
-    &.cards {
-      background: $green;
-    }
+.text-button {
+  color: var(--p-sky-500);
+  padding: 0 0.5rem;
+  text-decoration: underline;
+  cursor: pointer;
+  &.disabled {
+    text-decoration: none;
+    cursor: default;
   }
 }

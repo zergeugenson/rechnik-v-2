@@ -79,7 +79,7 @@ watch(
 
 <template>
   <div class="layout-wrapper flex flex-col w-full">
-    <Menubar :model="items" class="app-menu-bar grow">
+    <Menubar :model="items" class="app-menu-bar grow-0">
       <template #item="{ item, props }">
         <router-link v-slot="{ href, navigate }" :to="item.route" custom>
           <a :href="href" v-bind="props.action" @click="navigate">
@@ -89,14 +89,14 @@ watch(
         </router-link>
       </template>
       <template #end>
-        <button @click="toggleAddWord" class="p-menubar-item-link">
+        <button @click="toggleAddWord" class="p-menubar-item-link" size="small">
           <span class="pi pi-plus-circle" />
           <span>Добавить слово</span>
         </button>
       </template>
     </Menubar>
 
-    <div class="app-body grow-0">
+    <div class="app-body grow">
       <router-view></router-view>
     </div>
 
@@ -115,10 +115,21 @@ watch(
         <InputText class="w-full mb-4" id="eng-add-input" v-model="inputNewWord.eng" />
         <label for="eng-add-input">Ключевая фраза для картинки</label>
       </IftaLabel>
-      <Button label="Закончить" severity="secondary" @click="toggleAddWord" class="mr-2"/>
-      <Button label="Сохранить" severity="success" @click="submitNewWord" />
+      <Button label="Закончить" severity="secondary" @click="toggleAddWord" class="mr-2" size="small"/>
+      <Button label="Сохранить" severity="success" @click="submitNewWord" size="small" />
     </Popover>
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.layout-wrapper {
+  max-height: calc(100vh - 2rem);
+  @include fmob {
+    max-height: unset;
+  }
+}
+.app-body {
+  max-height: 100%;
+  overflow: hidden;
+}
+</style>
