@@ -60,7 +60,6 @@ const setLanguage = (lang) => {
   }
 };
 
-
 const userResponse = (rightAnswer) => {
   showUserReply.value = true;
   if (rightAnswer) {
@@ -78,11 +77,8 @@ async function hideWord (id) {
     globalStore.hiddenWords.push(id);
   }
   const success = await globalStore.hideWord();
-  if (success?.length) {
-    fireNextWord();
-  } else {
-    console.error("Ошибка: слово не спрятано");
-  }
+  if (!success?.length) console.error("Ошибка: слово не спрятано");
+  fireNextWord();
 }
 
 const getData = () => {
@@ -110,27 +106,20 @@ onMounted(() => {
       <span @click="setLanguage('srb')" :class="['control-bar__button', 'text-button', {disabled: questionLanguage === 'srb'}]">сербский</span>
     </div>
 
-    <div class="loader" v-show="startNewLap">
-      <div class="loader__container">...</div>
-    </div>
-
-
-
     <div class="card-body mt-3" v-if="visualDictionary && visualDictionary.length">
 
-      <div class="card-body__picture">
+      <div class="card-body__picture" >
+        <div class="card-body__picture-curtain w-full h-full" @mouseenter.stop></div>
         <iframe
             class="card-body__picture-iframe"
             :src="funnyPictureSrc"
-            v-if="funnyPictureSrc"
-            style="width: auto; height: 100%; border: 0; background: #f9f9f9"
+            v-if="funnyPictureSrc || !startNewLap"
             allowfullscreen
             scrolling="no"
             allow="encrypted-media;"
         />
-        <img v-else src="@/assets/vue.svg" alt="default picture" style="width: auto; height: 100%;" />
+        <ProgressSpinner v-else class="card-body__picture-is-buisy" strokeWidth="3" fill="transparent" animationDuration="3s" aria-label="Custom ProgressSpinner" />
       </div>
-
 
       <div>
       <div class="text-base mt-3 text-center">{{ visualDictionary[0][currentLanguage] }}</div>
@@ -178,6 +167,7 @@ onMounted(() => {
     align-items: center;
     flex-direction: column;
     &__picture {
+      position: relative;
       aspect-ratio: 1 / 1;
       display: block;
       margin-left: auto;
@@ -192,6 +182,22 @@ onMounted(() => {
     }
     &__picture-iframe {
       min-width: 100%;
+      width: auto;
+      height: 100%;
+      border: 0;
+      background: #f9f9f9;
+      z-index:0;
+    }
+    &__picture-curtain {
+      position: absolute;
+      top:0;
+      left:0;
+      z-index: 1;
+    }
+    &__picture-is-buisy {
+      position: absolute;
+      top: calc(50% - 50px);
+      left: calc(50% - 50px);
     }
     &__reply {
       border: 1px dashed #e5e5e5;
@@ -206,60 +212,6 @@ onMounted(() => {
           width: 246px;
         }
       }
-    }
-  }
-
-  .loader {
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    float: left;
-    overflow: hidden;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    position: absolute;
-    background: white;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-  }
-  .loader-container,
-  .loader-container:after {
-    border-radius: 50%;
-    width: 10em;
-    height: 10em;
-  }
-  .loader-container {
-    margin: calc(50% - 100px) auto;
-    font-size: 10px;
-    position: relative;
-    text-indent: -9999em;
-    border-top: 1.1em solid rgba(13, 197, 193, 0.2);
-    border-right: 1.1em solid rgba(13, 197, 193, 0.2);
-    border-bottom: 1.1em solid rgba(13, 197, 193, 0.2);
-    border-left: 1.1em solid #ffffff;
-    -webkit-transform: translateZ(0);
-    -ms-transform: translateZ(0);
-    transform: translateZ(0);
-    -webkit-animation: load8 1.1s infinite linear;
-    animation: load8 0.75s infinite linear;
-  }
-  @-webkit-keyframes load8 {
-    0% {
-      -webkit-transform: rotate(0deg);
-      transform: rotate(0deg);
-    }
-    100% {
-      -webkit-transform: rotate(360deg);
-      transform: rotate(360deg);
-    }
-  }
-  @keyframes load8 {
-    0% {
-      -webkit-transform: rotate(0deg);
-      transform: rotate(0deg);
-    }
-    100% {
-      -webkit-transform: rotate(360deg);
-      transform: rotate(360deg);
     }
   }
 }

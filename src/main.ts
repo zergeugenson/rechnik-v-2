@@ -17,6 +17,8 @@ import Popover from 'primevue/popover';
 import IftaLabel from 'primevue/iftalabel';
 import InputText from 'primevue/inputtext';
 import ToastService from 'primevue/toastservice';
+import ProgressSpinner from 'primevue/progressspinner';
+
 
 const app = createApp(App);
 
@@ -37,5 +39,6 @@ app.component('Menubar', Menubar);
 app.component('Popover', Popover);
 app.component('IftaLabel', IftaLabel);
 app.component('InputText', InputText);
+app.component('ProgressSpinner', ProgressSpinner);
 
 app.use(router).mount('#app');
