@@ -3,23 +3,19 @@
 import { ref, computed, onMounted } from 'vue';
 import { shaffleArray, serbianLC } from "@/common/functions.js";
 import { useGlobalStore } from '@/stores/global';
-import { useRouter } from "vue-router";
 
 const globalStore = useGlobalStore();
-const $router = useRouter();
 
 const visualDictionary = ref([]);
+const userDictionary = computed( () => {
+  return globalStore.getShaffledDictionary();
+});
 
 const funnyPictureSrc = ref<string>('');
 const questionLanguage = ref('srb');
 const currentLanguage = ref('rus');
-
 const showUserReply = ref<boolean>(false);
 const startNewLap = ref<boolean>(false);
-
-const userDictionary = computed( () => {
-  return globalStore.getShaffledDictionary();
-});
 
 const fireNextWord = () => {
   showUserReply.value = false;
@@ -122,9 +118,9 @@ onMounted(() => {
       </div>
 
       <div>
-      <div class="text-base mt-3 text-center">{{ visualDictionary[0][currentLanguage] }}</div>
+      <div class="text-base mt-3 text-center">{{ serbianLC(visualDictionary[0][currentLanguage]) }}</div>
       <div class="card-body__reply text-base text-center font-bold mt-3 mb-3">
-        <span v-if="showUserReply">{{ visualDictionary[0][questionLanguage] }}</span>
+        <span v-if="showUserReply">{{ serbianLC(visualDictionary[0][questionLanguage]) }}</span>
         &nbsp;
       </div>
 

@@ -15,51 +15,48 @@ export const useGlobalStore = defineStore('global', () => {
 
   // Actions
   async function getFullDictionary () {
-    const { data, statusCode, onFetchError } = await useFetch(`${baseURL}/data.json`, { immediate: true }).get().json();
+    const { data, statusCode } = await useFetch(`${baseURL}/data.json`, { immediate: true }).get().json();
     if(data?.value) {
       allWords.value = data.value;
-    }
-    onFetchError(() => {
+    } else {
       setShowMessage('error', 'Ошибка получения словаря', `Код ошибки: ${statusCode.value}`, 7000);
-    });
+    }
     return data.value
   }
 
   async function getHiddenDictionary () {
-    const { data, statusCode, onFetchError } = await useFetch(`${baseURL}/hide.json`, { immediate: true }).get().json();
+    const { data, statusCode } = await useFetch(`${baseURL}/hide.json`, { immediate: true }).get().json();
     if(data?.value) {
       hiddenWords.value = data.value;
-    }
-    onFetchError(() => {
+    } else {
       setShowMessage('error', 'Ошибка получения спрятанных слов', `Код ошибки: ${statusCode.value}`, 7000);
-    });
-    return data.value
+    }
+    return data.value || []
   }
 
   async function getGrammar () {
-    const { data, statusCode, onFetchError } = await useFetch(`${baseURL}/grammar.json`, { immediate: true }).get().json();
+    const { data, statusCode } = await useFetch(`${baseURL}/grammar.json`, { immediate: true }).get().json();
     if(data?.value) {
       grammarRules.value = data.value;
-    }
-    onFetchError(() => {
+    }else {
       setShowMessage('error', 'Ошибка файла грамматики', `Код ошибки: ${statusCode.value}`, 7000);
-    });
-    return data.value
+    }
+    return data.value || []
   }
 
   async function hideWord() {
-    const { data, statusCode, onFetchError } = await useFetch(`${baseURL}/hide.php`, { immediate: true, headers: { "Content-type": "application/json; charset=UTF-8" } }).post(JSON.stringify(hiddenWords.value)).json();
-    onFetchError(() => {
-      setShowMessage('error', 'Ошибка файла грамматики', `Код ошибки: ${statusCode.value}`, 7000);
-    });
-    return data.value
+    const { data, statusCode } = await useFetch(`${baseURL}/hides.php`, { immediate: true, headers: { "Content-type": "application/json; charset=UTF-8" } }).post(JSON.stringify(hiddenWords.value)).json();
+    if(!data?.value) {
+      setShowMessage('error', 'В демке запись выключена', `Код ошибки: ${statusCode.value}`, 7000);
+    }
+    return data.value || []
   }
 
   async function addWord() {
-    const { data, statusCode, onFetchError } = await useFetch(`${baseURL}/replace.php`, { immediate: true, headers: { "Content-type": "application/json; charset=UTF-8" } }).post(JSON.stringify(allWords.value)).json();
-    onFetchError(() => {
-      setShowMessage('error', 'Ошибка файла грамматики', `Код ошибки: ${statusCode.value}`, 7000);
-    });
+    const { data, statusCode } = await useFetch(`${baseURL}/replace.php`, { immediate: true, headers: { "Content-type": "application/json; charset=UTF-8" } }).post(JSON.stringify(allWords.value)).json();
+    if(!data?.value) {
+      setShowMessage('error', 'В демке запись выключена', `Код ошибки: ${statusCode.value}`, 7000);
+    }
     return data.value
   }
 
