@@ -1,3 +1,4 @@
+/* Variables */
 $font-size: 1rem;
 $background-color: white;
 $font-color: #dae0e0;
@@ -12,6 +13,7 @@ $yellow: #feb300;
 $blue: #0366ee;
 $margenta: #4713AFFF;
 
+/* Mixins */
 @mixin fmob {
   @media screen and (min-width: 768px) {
     @content;
@@ -27,5 +29,17 @@ $margenta: #4713AFFF;
 @mixin fdesk {
   @media screen and (min-width: 1280px) {
     @content;
+  }
+}
+
+/* Styles */
+.text-button {
+  color: var(--p-sky-500);
+  padding: 0 0.5rem;
+  text-decoration: underline;
+  cursor: pointer;
+  &.disabled {
+    text-decoration: none;
+    cursor: default;
   }
 }

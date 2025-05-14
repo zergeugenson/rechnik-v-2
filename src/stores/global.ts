@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { shaffleArray } from "@/common/functions.js";
 import useFetch from '@/api/myFetsh';
 
-export const baseURL = !import.meta.env.DEV ? 'http://localhost:5173' : 'http://pda.hromov.com'; //window.location.origin;
+export const baseURL = !import.meta.env.DEV ? 'http://localhost:5173' : 'http://pda.hromov.com/assets'; //window.location.origin;
 
 export const useGlobalStore = defineStore('global', () => {
 
@@ -15,7 +15,7 @@ export const useGlobalStore = defineStore('global', () => {
 
   // Actions
   async function getFullDictionary () {
-    const { data, statusCode, onFetchError } = await useFetch(`${baseURL}/assets/data.json`, { immediate: true }).json();
+    const { data, statusCode, onFetchError } = await useFetch(`${baseURL}/data.json`, { immediate: true }).get().json();
     if(data?.value) {
       allWords.value = data.value;
     }
@@ -26,7 +26,7 @@ export const useGlobalStore = defineStore('global', () => {
   }
 
   async function getHiddenDictionary () {
-    const { data, statusCode, onFetchError } = await useFetch(`${baseURL}/assets/hide.json`, { immediate: true }).json();
+    const { data, statusCode, onFetchError } = await useFetch(`${baseURL}/hide.json`, { immediate: true }).get().json();
     if(data?.value) {
       hiddenWords.value = data.value;
     }
@@ -37,7 +37,7 @@ export const useGlobalStore = defineStore('global', () => {
   }
 
   async function getGrammar () {
-    const { data, statusCode, onFetchError } = await useFetch(`${baseURL}/assets/grammar.json`, { immediate: true }).json();
+    const { data, statusCode, onFetchError } = await useFetch(`${baseURL}/grammar.json`, { immediate: true }).get().json();
     if(data?.value) {
       grammarRules.value = data.value;
     }
@@ -48,29 +48,19 @@ export const useGlobalStore = defineStore('global', () => {
   }
 
   async function hideWord() {
-    try {
-      const response = await fetch("http://pda.hromov.com/assets/hide.php", {
-        method: "POST",
-        body: JSON.stringify(hiddenWords.value),
-        headers: { "Content-type": "application/json; charset=UTF-8" }
-      });
-      return await response.json();
-    } catch (error) {
-      console.error("Hiding error", error);
-    }
+    const { data, statusCode, onFetchError } = await useFetch(`${baseURL}/hide.php`, { immediate: true, headers: { "Content-type": "application/json; charset=UTF-8" } }).post(JSON.stringify(hiddenWords.value)).json();
+    onFetchError(() => {
+      setShowMessage('error', 'Ошибка файла грамматики', `Код ошибки: ${statusCode.value}`, 7000);
+    });
+    return data.value
   }
 
   async function addWord() {
-    try {
-      const response = await fetch("http://pda.hromov.com/assets/replace.php", {
-        method: "POST",
-        body: JSON.stringify(allWords.value),
-        headers: { "Content-type": "application/json; charset=UTF-8" }
-      });
-      return await response.json();
-    } catch (error) {
-      console.error(error);
-    }
+    const { data, statusCode, onFetchError } = await useFetch(`${baseURL}/replace.php`, { immediate: true, headers: { "Content-type": "application/json; charset=UTF-8" } }).post(JSON.stringify(allWords.value)).json();
+    onFetchError(() => {
+      setShowMessage('error', 'Ошибка файла грамматики', `Код ошибки: ${statusCode.value}`, 7000);
+    });
+    return data.value
   }
 
   const setIsAdding = (value) => {
@@ -81,7 +71,7 @@ export const useGlobalStore = defineStore('global', () => {
   const getDictionary = () => {
     return allWords?.value.filter(word => {
       if (!hiddenWords.value.includes(word.id)) return word;
-    }) || [];
+    }) //.slice(0, 2) || [];
   }
 
   const getShaffledDictionary = () => {
