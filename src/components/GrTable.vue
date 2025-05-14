@@ -12,16 +12,16 @@ const cols = computed( () => {
 </script>
 
 <template>
-  <table v-if="cols" :class="['gr-table', [rootClass]]" class="mt-3">
+  <table v-if="cols" :class="['gr-table', [rootClass]]" class="mt-3 w-full max-w-200 mx-auto border-0 border-collapse">
     <tbody>
       <tr>
         <th :colspan="cols" v-html="header" />
       </tr>
-      <tr v-for="(row, rowindex) in data" :key="rowindex">
+      <tr v-for="(row, rowindex) in data" :key="'table-row-' + rowindex">
         <td
           v-for="(col, colindex) in row"
-          :key="colindex"
-          :class="{ subhead: rowindex === 0 }"
+          :key="'table-data-' + colindex"
+          :class="{ subhead: rowindex === 0, first: colindex === 0}"
           v-html="col"
         />
       </tr>
@@ -51,10 +51,6 @@ table.gr-table tr th {
 
 <style scoped lang="scss">
 table {
-  border: none;
-  border-collapse: collapse;
-  width: 100%;
-  max-width: 640px;
   th {
     border: 1px solid $grey;
     background: $grey;
@@ -66,17 +62,13 @@ table {
     border: 1px solid $grey;
     font-size: 0.9rem;
     padding: 0.3rem;
+    width: 10rem;
     &.subhead {
       font-weight: 700;
     }
-  }
-  &.red {
-    td,
-    th {
-      border: 1px solid $red;
-    }
-    th {
-      background: $red;
+    &.first {
+      width: 7rem;
+      min-width: 7rem;
     }
   }
   &.margenta {
