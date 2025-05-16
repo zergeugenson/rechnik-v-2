@@ -44,7 +44,7 @@ async function submitNewWord() {
     id: Date.now()
   });
 
-  const success = await globalStore.addWord();
+  const success = await globalStore.saveDictionary();
   if (success?.length) {
     inputNewWord.value = { srb: "", rus: "", eng: "" };
     userInputError.value = false;

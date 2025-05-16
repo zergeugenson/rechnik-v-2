@@ -72,13 +72,13 @@ async function hideWord (id) {
   } else {
     globalStore.hiddenWords.push(id);
   }
-  const success = await globalStore.hideWord();
+  const success = await globalStore.saveHiddenWords();
   if (!success?.length) console.error("Ошибка: слово не спрятано");
   fireNextWord();
 }
 
 const getData = () => {
-  Promise.all([globalStore.getFullDictionary(), globalStore.getHiddenDictionary()]).then(() => {
+  Promise.all([globalStore.getFullDictionary(), globalStore.getHiddenWords()]).then(() => {
     visualDictionary.value = [...userDictionary.value]
     fireNextWord();
   }).catch(error => {

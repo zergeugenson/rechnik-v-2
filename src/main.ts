@@ -18,6 +18,10 @@ import IftaLabel from 'primevue/iftalabel';
 import InputText from 'primevue/inputtext';
 import ToastService from 'primevue/toastservice';
 import ProgressSpinner from 'primevue/progressspinner';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import ColumnGroup from 'primevue/columngroup';
+import Row from 'primevue/row';
 
 
 const app = createApp(App);
@@ -40,5 +44,9 @@ app.component('Popover', Popover);
 app.component('IftaLabel', IftaLabel);
 app.component('InputText', InputText);
 app.component('ProgressSpinner', ProgressSpinner);
+app.component('DataTable', DataTable);
+app.component('Column', Column);
+app.component('ColumnGroup', ColumnGroup);
+app.component('Row', Row);
 
 app.use(router).mount('#app');

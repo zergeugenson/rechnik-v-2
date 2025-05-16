@@ -17,6 +17,11 @@ const router = createRouter({
           path: '/grammar',
           name: 'Grammar',
           component: () => import('@/views/Grammar.vue')
+        },
+        {
+          path: '/editor',
+          name: 'Editor',
+          component: () => import('@/views/Editor.vue')
         }
       ]
     },

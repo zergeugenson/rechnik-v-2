@@ -21,10 +21,11 @@ export const useGlobalStore = defineStore('global', () => {
     } else {
       setShowMessage('error', 'Ошибка получения словаря', `Код ошибки: ${statusCode.value}`, 7000);
     }
-    return data.value
+    console.log("data?.value", data?.value)
+    return data.value || []
   }
 
-  async function getHiddenDictionary () {
+  async function getHiddenWords () {
     const { data, statusCode } = await useFetch(`${baseURL}/hide.json`, { immediate: true }).get().json();
     if(data?.value) {
       hiddenWords.value = data.value;
@@ -44,15 +45,15 @@ export const useGlobalStore = defineStore('global', () => {
     return data.value || []
   }
 
-  async function hideWord() {
-    const { data, statusCode } = await useFetch(`${baseURL}/hides.php`, { immediate: true, headers: { "Content-type": "application/json; charset=UTF-8" } }).post(JSON.stringify(hiddenWords.value)).json();
+  async function saveHiddenWords() {
+    const { data, statusCode } = await useFetch(`${baseURL}/hide.php`, { immediate: true, headers: { "Content-type": "application/json; charset=UTF-8" } }).post(JSON.stringify(hiddenWords.value)).json();
     if(!data?.value) {
       setShowMessage('error', 'В демке запись выключена', `Код ошибки: ${statusCode.value}`, 7000);
     }
     return data.value || []
   }
 
-  async function addWord() {
+  async function saveDictionary() {
     const { data, statusCode } = await useFetch(`${baseURL}/replace.php`, { immediate: true, headers: { "Content-type": "application/json; charset=UTF-8" } }).post(JSON.stringify(allWords.value)).json();
     if(!data?.value) {
       setShowMessage('error', 'В демке запись выключена', `Код ошибки: ${statusCode.value}`, 7000);
@@ -65,6 +66,7 @@ export const useGlobalStore = defineStore('global', () => {
   }
 
   // Getters
+
   const getDictionary = () => {
     return allWords?.value.filter(word => {
       if (!hiddenWords.value.includes(word.id)) return word;
@@ -98,9 +100,9 @@ export const useGlobalStore = defineStore('global', () => {
     showError,
     getShaffledDictionary,
     getFullDictionary,
-    getHiddenDictionary,
-    hideWord,
-    addWord,
+    getHiddenWords,
+    saveHiddenWords,
+    saveDictionary,
     getGrammar,
     isAdding,
     setIsAdding,
