@@ -53,15 +53,6 @@ async function submitNewWord() {
   }
 }
 
-onMounted(() => {
-  // Promise.all(['http://localhost:5173/data.json', 'http://localhost:5173/hide.json'].map(id =>
-  //     fetch(id).then(resp => resp.json())
-  // )).then(resp => {
-  //     console.log(resp)
-  // });
-
-});
-
 watch(
   () => globalStore.showMessage,
   (message) => {
@@ -70,8 +61,8 @@ watch(
 );
 watch(
     () => addWord?.value?.visible,
-    (v) => {
-      globalStore.setIsAdding(v)
+    (n) => {
+      globalStore.setIsAdding(n)
     }
 );
 
@@ -96,7 +87,7 @@ watch(
       </template>
     </Menubar>
 
-    <div class="app-body grow">
+    <div class="grow max-h-full overflow-hidden">
       <router-view></router-view>
     </div>
 
@@ -121,9 +112,3 @@ watch(
   </div>
 </template>
 
-<style lang="scss">
-.app-body {
-  max-height: 100%;
-  overflow: hidden;
-}
-</style>

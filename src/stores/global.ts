@@ -2,15 +2,16 @@ import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import { shaffleArray } from "@/common/functions.js";
 import useFetch from '@/api/myFetsh';
+import type { Dictionary, Grammar } from '@/interfaces/interfaces';
 
-export const baseURL = !import.meta.env.DEV ? 'http://localhost:5173' : 'http://pda.hromov.com/assets'; //window.location.origin;
+export const baseURL:string = !import.meta.env.DEV ? 'http://localhost:5173' : 'http://pda.hromov.com/assets'; //window.location.origin;
+const wordsInSecssion:number = 25;
 
 export const useGlobalStore = defineStore('global', () => {
 
   // Store
-  const allWords = ref<any>([]);
-  const hiddenWords = ref<any>([]);
-  const grammarRules = ref<any>({});
+  const allWords = ref<Dictionary[]>([]);
+  const grammarRules = ref<Grammar>({});
   const isAdding = ref<boolean>(false);
 
   // Actions
@@ -21,18 +22,7 @@ export const useGlobalStore = defineStore('global', () => {
     } else {
       setShowMessage('error', 'Ошибка получения словаря', `Код ошибки: ${statusCode.value}`, 7000);
     }
-    console.log("data?.value", data?.value)
-    return data.value || []
-  }
-
-  async function getHiddenWords () {
-    const { data, statusCode } = await useFetch(`${baseURL}/hide.json`, { immediate: true }).get().json();
-    if(data?.value) {
-      hiddenWords.value = data.value;
-    } else {
-      setShowMessage('error', 'Ошибка получения спрятанных слов', `Код ошибки: ${statusCode.value}`, 7000);
-    }
-    return data.value || []
+    return data.value
   }
 
   async function getGrammar () {
@@ -41,14 +31,6 @@ export const useGlobalStore = defineStore('global', () => {
       grammarRules.value = data.value;
     }else {
       setShowMessage('error', 'Ошибка файла грамматики', `Код ошибки: ${statusCode.value}`, 7000);
-    }
-    return data.value || []
-  }
-
-  async function saveHiddenWords() {
-    const { data, statusCode } = await useFetch(`${baseURL}/hide.php`, { immediate: true, headers: { "Content-type": "application/json; charset=UTF-8" } }).post(JSON.stringify(hiddenWords.value)).json();
-    if(!data?.value) {
-      setShowMessage('error', 'В демке запись выключена', `Код ошибки: ${statusCode.value}`, 7000);
     }
     return data.value || []
   }
@@ -68,13 +50,7 @@ export const useGlobalStore = defineStore('global', () => {
   // Getters
 
   const getDictionary = () => {
-    return allWords?.value.filter(word => {
-      if (!hiddenWords.value.includes(word.id)) return word;
-    }) //.slice(0, 2) || [];
-  }
-
-  const getShaffledDictionary = () => {
-    return shaffleArray(getDictionary());
+    return shaffleArray(allWords?.value.filter(word => !word.hidden)).slice(0, wordsInSecssion) || [];
   }
 
   // Notifications
@@ -94,14 +70,11 @@ export const useGlobalStore = defineStore('global', () => {
   return {
     showMessage,
     allWords,
-    hiddenWords,
     grammarRules,
     setShowMessage,
     showError,
-    getShaffledDictionary,
+    getDictionary,
     getFullDictionary,
-    getHiddenWords,
-    saveHiddenWords,
     saveDictionary,
     getGrammar,
     isAdding,

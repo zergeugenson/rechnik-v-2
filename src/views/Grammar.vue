@@ -2,9 +2,10 @@
 import { computed, onMounted } from 'vue';
 import { useGlobalStore } from '@/stores/global';
 import GrTable from "@/components/GrTable.vue";
+import type { Grammar } from '@/interfaces/interfaces';
 
 const globalStore = useGlobalStore();
-const grammar = computed( () => {
+const grammar:Grammar = computed( () => {
   return globalStore.grammarRules;
 });
 
@@ -16,18 +17,18 @@ onMounted(() => {
 <template>
   <div class="grammar-page" v-if="grammar.padez">
     <h2 class="text-xl font-semibold mt-8 mb-3 text-center">Падежи</h2>
-    <gr-table v-for="padez in ['genitiv', 'akuzativ', 'dativ', 'instrumental', 'locativ']"
+    <gr-table v-for="currentPadez in Object.values(grammar.padez)"
       rootClass="margenta"
-      :key="'padez-'+padez"
-      :header="grammar.padez[padez].header"
-      :data="grammar.padez[padez].data"
+      :key="'padez-'+currentPadez.header"
+      :header="currentPadez.header"
+      :data="currentPadez.data"
     />
     <h2 class="text-xl font-semibold mt-8 mb-3 text-center">Глаголы</h2>
     <div v-if="grammar && grammar.glagola">
-      <gr-table v-for="form in ['pie', 'paju', 'peu']"
-        :key="'glagol-'+form"
-        :header="grammar.glagola[form].header"
-        :data="grammar.glagola[form].data"
+      <gr-table v-for="glagolForm in Object.values(grammar.glagola)"
+        :key="'glagol-'+glagolForm.header"
+        :header="glagolForm.header"
+        :data="glagolForm.data"
       />
     </div>
   </div>

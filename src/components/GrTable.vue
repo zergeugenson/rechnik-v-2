@@ -2,7 +2,7 @@
 import { computed, defineProps } from "vue";
 
 const props = defineProps({
-  data: { type: [Array, Object], default: () => [] },
+  data: { type: [Array], default: () => [] },
   header: { type: String, default: "" },
   rootClass: { type: String, default: "" }
 });
