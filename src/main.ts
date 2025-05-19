@@ -48,5 +48,7 @@ app.component('DataTable', DataTable);
 app.component('Column', Column);
 app.component('ColumnGroup', ColumnGroup);
 app.component('Row', Row);
+import StyleClass from 'primevue/styleclass';
 
+app.directive('styleclass', StyleClass);
 app.use(router).mount('#app');

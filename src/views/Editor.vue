@@ -65,7 +65,6 @@ onMounted(() => {
 });
 
 const rowStyle = (data) => {
-  console.log("1--", data)
   if (isHidden(data.id)) {
     return { background: '#f9f9f9' };
   }
@@ -74,38 +73,33 @@ const rowStyle = (data) => {
 </script>
 
 <template>
-  <div class="administration">
-
-
-
-
-    <DataTable
-        :value="rechnik"
-        paginator
-        showGridlines
-        :rows="25"
-        class="mt-4"
-        :rowStyle="rowStyle"
-    >
-      <Column v-for="column of tableField" :key="column.header" :field="column.field" :header="column.header" sortable>
-        <template #body="{ data }">
-          <InputText type="text" v-model="data[column.field]" size="small" style="width:100%; min-width: 5rem;"/>
-        </template>
-      </Column>
-      <Column field="actions" header="Действия" style="width: 14rem;">
-        <template #body="{ data }">
-          <Button @click="DeleteWord(data)" class="mr-2 mb-1" size="small" severity="danger">
-            Delete
-          </Button>
-          <Button @click="EditWord(data)" class="mr-2 mb-1" size="small" severity="info">
-            Edit
-          </Button>
-          <Button @click="HideWord(data.id)" size="small" :severity="isHidden(data.id) ? 'default' : 'secondary'">
-            {{ isHidden(data.id) ? "Show" : "Hide" }}
-          </Button>
-        </template>
-      </Column>
-    </DataTable>
-  </div>
+  <DataTable
+      :value="rechnik"
+      paginator
+      showGridlines
+      :rows="25"
+      class="mt-4"
+      :rowStyle="rowStyle"
+      editMode="cell"
+  >
+    <Column v-for="column of tableField" :key="column.header" :field="column.field" :header="column.header" sortable>
+      <template #body="{ data }">
+        <InputText type="text" v-model="data[column.field]" size="small" class="w-full" :style="{background: isHidden(data.id) ? 'transparent' : 'white'}" />
+      </template>
+    </Column>
+    <Column field="actions" header="Действия" style="width: 14rem !important;">
+      <template #body="{ data }">
+        <Button @click="DeleteWord(data)" class="mr-2 mb-1" size="small" severity="danger">
+          Delete
+        </Button>
+        <Button @click="EditWord(data)" class="mr-2 mb-1" size="small" severity="info">
+          Edit
+        </Button>
+        <Button @click="HideWord(data.id)" size="small" :severity="isHidden(data.id) ? 'default' : 'secondary'">
+          {{ isHidden(data.id) ? "Show" : "Hide" }}
+        </Button>
+      </template>
+    </Column>
+  </DataTable>
 </template>
 
