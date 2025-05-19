@@ -1,30 +1,32 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useGlobalStore } from '@/stores/global';
 
 const globalStore = useGlobalStore();
 
-const sort = ref(false);
-const rechnik = computed( () => {
+const allWords = computed( () => {
   return globalStore.allWords
 });
+
 const hiddenWords = computed( () => {
   return globalStore.hiddenWords;
 });
+
 const isHidden = (id) => {
   return hiddenWords.value.includes(id)
 };
+
+const rowStyle = (data) => {
+  if (isHidden(data.id)) {
+    return { background: '#f9f9f9' };
+  }
+};
+
 const tableField = [
   { field: 'srb', header: 'По-сербски' },
   { field: 'rus', header: 'По-русски' },
   { field: 'eng', header: 'Картинка' },
-]
-
-const SortRechnik = (field = "srb") => {
-  rechnik.value.sort((a, b) => a[field].localeCompare(b[field]));
-  if (sort.value) rechnik.value.reverse();
-  sort.value = !sort.value;
-}
+];
 
 const getData = () => {
   Promise.all([globalStore.getHiddenWords(), globalStore.getFullDictionary()]).catch(error => {
@@ -59,22 +61,13 @@ const HideWord = async (id) => {
 
 onMounted(() => {
   getData();
-  setTimeout(() => {
-    SortRechnik("srb");
-  }, 250);
 });
-
-const rowStyle = (data) => {
-  if (isHidden(data.id)) {
-    return { background: '#f9f9f9' };
-  }
-};
 
 </script>
 
 <template>
   <DataTable
-      :value="rechnik"
+      :value="allWords"
       paginator
       showGridlines
       :rows="25"
