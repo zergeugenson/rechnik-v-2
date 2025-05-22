@@ -1,7 +1,7 @@
 <script setup lang="ts">
 //I9UZB7EukaGizTaAfND8ABvgASj8kWfm
 import { ref, onMounted } from 'vue';
-import { shaffleArray, serbianLC } from "@/common/functions.js";
+import { shaffleArray, serbianLC, ucFirst } from "@/common/functions.js";
 import { useGlobalStore } from '@/stores/global';
 import type { Dictionary } from '@/interfaces/interfaces';
 
@@ -112,9 +112,9 @@ onMounted(() => {
           />
         </div>
 
-        <div class="text-base mt-3 text-center">{{ serbianLC(visualDictionary[0][currentLanguage]) }}</div>
+        <div class="text-base mt-3 text-center">{{ ucFirst(serbianLC(visualDictionary[0][currentLanguage])) }}</div>
         <div class="card-body__reply text-base text-center font-bold mt-3 mb-3">
-          <span >{{ showUserReply ? serbianLC(visualDictionary[0][questionLanguage]) : '...' }}</span>
+          <span >{{ showUserReply ? ucFirst(serbianLC(visualDictionary[0][questionLanguage])) : '...' }}</span>
         </div>
 
         <div class="card-body__controls mt-3">
