@@ -29,6 +29,7 @@ const shaffleArray = (array: any) => {
 };
 
 const serbianLC = (str: string) => {
+  // 2DO: Это legasy. Можно убрать отовсюду из кода после вычистки базы
   return Array.from(str).reduce((word, letter) => {
     switch (letter) {
       case "C":
