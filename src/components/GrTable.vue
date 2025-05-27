@@ -4,15 +4,19 @@ import { computed, defineProps } from "vue";
 const props = defineProps({
   data: { type: [Array], default: () => [] },
   header: { type: String, default: "" },
-  rootClass: { type: String, default: "" }
+  rootClass: { type: String, default: "" },
 });
-const cols = computed( () => {
+const cols = computed(() => {
   return props?.data[0]?.length;
 });
 </script>
 
 <template>
-  <table v-if="cols" :class="['gr-table', [rootClass]]" class="mt-3 w-full max-w-200 mx-auto border-0 border-collapse">
+  <table
+    v-if="cols"
+    :class="['gr-table', [rootClass]]"
+    class="mt-3 w-full max-w-200 mx-auto border-0 border-collapse"
+  >
     <tbody>
       <tr>
         <th :colspan="cols" v-html="header" />
@@ -21,7 +25,7 @@ const cols = computed( () => {
         <td
           v-for="(col, colindex) in row"
           :key="'table-data-' + colindex"
-          :class="{ subhead: rowindex === 0, first: colindex === 0}"
+          :class="{ subhead: rowindex === 0, first: colindex === 0 }"
           v-html="col"
         />
       </tr>

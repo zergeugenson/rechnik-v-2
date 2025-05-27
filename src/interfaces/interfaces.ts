@@ -16,14 +16,14 @@ interface Grammar {
     paju: wordConstruct;
     peu: wordConstruct;
     pie: wordConstruct;
-  }
+  };
   padez: {
     akuzativ: wordConstruct;
     dativ: wordConstruct;
     genetiv: wordConstruct;
     instrumental: wordConstruct;
     locativ: wordConstruct;
-  }
+  };
 }
 
 export type { Dictionary, Grammar };

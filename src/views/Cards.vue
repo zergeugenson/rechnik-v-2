@@ -1,17 +1,17 @@
 <script setup lang="ts">
 //I9UZB7EukaGizTaAfND8ABvgASj8kWfm
-import { ref, onMounted } from 'vue';
+import { ref, onMounted } from "vue";
 import { shaffleArray, serbianLC, ucFirst } from "@/common/functions.js";
-import { useGlobalStore } from '@/stores/global';
-import type { Dictionary } from '@/interfaces/interfaces';
+import { useGlobalStore } from "@/stores/global";
+import type { Dictionary } from "@/interfaces/interfaces";
 
 const globalStore = useGlobalStore();
 
 const visualDictionary = ref<Dictionary[]>([]);
 
-const funnyPictureSrc = ref<string>('');
-const questionLanguage = ref<string>('srb');
-const currentLanguage = ref<string>('rus');
+const funnyPictureSrc = ref<string>("");
+const questionLanguage = ref<string>("srb");
+const currentLanguage = ref<string>("rus");
 const showUserReply = ref<boolean>(false);
 const startNewSession = ref<boolean>(false);
 
@@ -29,16 +29,19 @@ const fireNextWord = () => {
 };
 
 async function getFunnyPicture() {
-  let name:string = visualDictionary?.value[0]?.eng;
+  let name: string = visualDictionary?.value[0]?.eng;
 
   if (!name) {
-    funnyPictureSrc.value = '';
+    funnyPictureSrc.value = "";
     return;
   } else {
     name.replace(/\s/g, "%20");
   }
   try {
-    const response = await fetch("http://api.giphy.com/v1/gifs/search?api_key=I9UZB7EukaGizTaAfND8ABvgASj8kWfm&limit=1&q=" + name);
+    const response = await fetch(
+      "http://api.giphy.com/v1/gifs/search?api_key=I9UZB7EukaGizTaAfND8ABvgASj8kWfm&limit=1&q=" +
+        name,
+    );
     const json = await response.json();
     funnyPictureSrc.value = json.data[0].embed_url;
   } catch (error) {
@@ -65,13 +68,13 @@ const userResponse = (rightAnswer: boolean) => {
   }
 };
 
-async function hideWord (id: number) {
-  delete visualDictionary.value.splice(0,1)
+async function hideWord(id: number) {
+  delete visualDictionary.value.splice(0, 1);
   globalStore.allWords.forEach((word: Dictionary) => {
-    if (word.id === id){
+    if (word.id === id) {
       word.hidden = true;
     }
-  })
+  });
   const success = await globalStore.saveDictionary();
   if (!success?.length) console.error("Ошибка: слово не спрятано");
   fireNextWord();
@@ -79,64 +82,107 @@ async function hideWord (id: number) {
 
 const getData = () => {
   globalStore.getFullDictionary().then(() => fireNextWord());
-}
+};
 
 onMounted(() => {
   getData();
 });
-
 </script>
 
 <template>
   <div class="cards-page mt-3">
-    <div class="control-bar text-sm flex ">
+    <div class="control-bar text-sm flex">
       <span>Язык:</span>
-      <span @click="setLanguage('rus')" :class="['control-bar__button', 'text-button', {disabled: questionLanguage === 'rus'}]">русский</span>
+      <span
+        @click="setLanguage('rus')"
+        :class="[
+          'control-bar__button',
+          'text-button',
+          { disabled: questionLanguage === 'rus' },
+        ]"
+        >русский</span
+      >
       <span>|</span>
-      <span @click="setLanguage('srb')" :class="['control-bar__button', 'text-button', {disabled: questionLanguage === 'srb'}]">сербский</span>
+      <span
+        @click="setLanguage('srb')"
+        :class="[
+          'control-bar__button',
+          'text-button',
+          { disabled: questionLanguage === 'srb' },
+        ]"
+        >сербский</span
+      >
     </div>
 
-    <ProgressSpinner v-show="startNewSession" class="card-body__picture-is-buisy" strokeWidth="3" fill="transparent" animationDuration="3s" aria-label="Custom ProgressSpinner" />
+    <ProgressSpinner
+      v-show="startNewSession"
+      class="card-body__picture-is-buisy"
+      strokeWidth="3"
+      fill="transparent"
+      animationDuration="3s"
+      aria-label="Custom ProgressSpinner"
+    />
 
-    <div class="card-body mt-3" v-if="visualDictionary && visualDictionary.length  && !startNewSession">
+    <div
+      class="card-body mt-3"
+      v-if="visualDictionary && visualDictionary.length && !startNewSession"
+    >
+      <div class="card-body__picture">
+        <div
+          class="card-body__picture-curtain w-full h-full"
+          @mouseenter.stop
+        ></div>
+        <iframe
+          class="card-body__picture-iframe"
+          :src="funnyPictureSrc"
+          v-show="funnyPictureSrc"
+          allowfullscreen
+          scrolling="no"
+          allow="encrypted-media;"
+        />
+      </div>
 
-        <div class="card-body__picture" >
-          <div class="card-body__picture-curtain w-full h-full" @mouseenter.stop></div>
-          <iframe
-              class="card-body__picture-iframe"
-              :src="funnyPictureSrc"
-              v-show="funnyPictureSrc"
-              allowfullscreen
-              scrolling="no"
-              allow="encrypted-media;"
-          />
-        </div>
+      <div class="text-base mt-3 text-center">
+        {{ ucFirst(serbianLC(visualDictionary[0][currentLanguage])) }}
+      </div>
+      <div class="card-body__reply text-base text-center font-bold mt-3 mb-3">
+        <span>{{
+          showUserReply
+            ? ucFirst(serbianLC(visualDictionary[0][questionLanguage]))
+            : "..."
+        }}</span>
+      </div>
 
-        <div class="text-base mt-3 text-center">{{ ucFirst(serbianLC(visualDictionary[0][currentLanguage])) }}</div>
-        <div class="card-body__reply text-base text-center font-bold mt-3 mb-3">
-          <span >{{ showUserReply ? ucFirst(serbianLC(visualDictionary[0][questionLanguage])) : '...' }}</span>
-        </div>
-
-        <div class="card-body__controls mt-3">
-          <Button @click="userResponse(false)" class="default mr-2" :disabled="showUserReply" size="small" severity="success">
-            Напомни
-          </Button>
-          <Button @click="userResponse(true)" v-if="!showUserReply" severity="info" size="small">
-            Помню
-          </Button>
-          <Button @click="fireNextWord()" v-else size="small" severity="success">
-            Дальше
-          </Button>
-          <br />
-          <Button
-            @click="hideWord(visualDictionary[0].id)"
-            class="button-hide mt-2"
-            severity="warn"
-          >
-            Больше не показывай
-          </Button>
-        </div>
-
+      <div class="card-body__controls mt-3">
+        <Button
+          @click="userResponse(false)"
+          class="default mr-2"
+          :disabled="showUserReply"
+          size="small"
+          severity="success"
+        >
+          Напомни
+        </Button>
+        <Button
+          @click="userResponse(true)"
+          v-if="!showUserReply"
+          severity="info"
+          size="small"
+        >
+          Помню
+        </Button>
+        <Button @click="fireNextWord()" v-else size="small" severity="success">
+          Дальше
+        </Button>
+        <br />
+        <Button
+          @click="hideWord(visualDictionary[0].id)"
+          class="button-hide mt-2"
+          severity="warn"
+        >
+          Больше не показывай
+        </Button>
+      </div>
     </div>
   </div>
 </template>
@@ -171,12 +217,12 @@ onMounted(() => {
       height: 100%;
       border: 0;
       background: #f9f9f9;
-      z-index:0;
+      z-index: 0;
     }
     &__picture-curtain {
       position: absolute;
-      top:0;
-      left:0;
+      top: 0;
+      left: 0;
       z-index: 1;
     }
     &__picture-is-buisy {
