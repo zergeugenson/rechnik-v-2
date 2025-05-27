@@ -118,7 +118,7 @@ onMounted(() => {
 
   <Popover ref="serbLetterPopOver">
     <div class="flex flex-row gap-3">
-      <serbian-input @set-srb-letter="setSerbLetter" />
+      <serbian-input @set-srb-letter="setSerbLetter" @close="serbLetterPopOver.hide();" />
     </div>
   </Popover>
 </template>

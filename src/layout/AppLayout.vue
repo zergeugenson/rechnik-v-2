@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { watch, ref, nextTick} from 'vue';
+import { watch, ref, nextTick, reactive} from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useGlobalStore } from '@/stores/global';
 import SerbianInput from '@/components/SerbianInput.vue';
 import { serbianLC } from "@/common/functions.js";
+import { required } from '@vuelidate/validators';
+import { useVuelidate } from '@vuelidate/core';
 
 const menuItems = ref([
   {
@@ -23,15 +25,20 @@ const menuItems = ref([
   },
 ]);
 
+const addWordRules = {
+  srb: { required },
+  rus: { required },
+};
+
+const inputNewWord = ref( { srb: '', rus: '', eng: '' });
 const globalStore = useGlobalStore();
 const serbLetterPopOver = ref();
 const addWordPopOver = ref();
 const serbianInputField = ref();
 const toast = useToast();
-const inputNewWord = ref( { srb: '', rus: '', eng: '' });
-const userInputError = ref<boolean>(false);
-const cursorPosition = ref<number>();
 
+const cursorPosition = ref<number>();
+const addWordValidate: any = useVuelidate(addWordRules, inputNewWord);
 
 const toggleSerbLetterPopOver = (e) => {
   serbLetterPopOver.value.hide(e);
@@ -54,28 +61,25 @@ const onBlur = () => {
 }
 
 const toggleaddWordPopOver = (e) =>{
+  addWordValidate.value.$reset();
+  inputNewWord.value = { srb: '', rus: '', eng: '' };
   addWordPopOver.value.toggle(e);
 }
 
 async function submitNewWord() {
-  if (!inputNewWord.value.srb || !inputNewWord.value.rus) {
-    userInputError.value = true;
-    return;
-  }
-
-  globalStore.allWords.push( {
-    srb: serbianLC(inputNewWord.value.srb),
-    rus: inputNewWord.value.rus,
-    eng: inputNewWord.value.eng,
-    id: Date.now()
-  });
-
-  const success = await globalStore.saveDictionary();
-  if (success?.length) {
-    inputNewWord.value = { srb: "", rus: "", eng: "" };
-    userInputError.value = false;
-  } else {
-    console.error("Ошибка записи словаря");
+  await addWordValidate.value.$validate();
+  if (!addWordValidate.value.$invalid) {
+    globalStore.allWords.push( {
+      srb: serbianLC(inputNewWord.value.srb),
+      rus: inputNewWord.value.rus,
+      eng: inputNewWord.value.eng,
+      id: Date.now()
+    });
+    const success = await globalStore.saveDictionary();
+    toggleaddWordPopOver('');
+    if (!success?.length) {
+      console.error("Ошибка записи словаря");
+    }
   }
 }
 
@@ -119,13 +123,13 @@ watch(
 
     <Toast position="bottom-right" />
 
-    <Popover ref="addWordPopOver">
+    <Popover ref="addWordPopOver" position="top" placeholder="Top">
       <IftaLabel>
         <InputText
             v-model="inputNewWord.srb"
-            :invalid="userInputError"
+            :invalid="addWordValidate.srb.$error"
             @click="toggleSerbLetterPopOver"
-            @blur="onBlur"
+            @blur="e => { onBlur(); inputNewWord.srb = e.target.value; }"
             class="w-full mb-2"
             id="srb-add-input"
             ref="serbianInputField"
@@ -136,7 +140,7 @@ watch(
       <IftaLabel>
         <InputText
             v-model="inputNewWord.rus"
-            :invalid="userInputError"
+            :invalid="addWordValidate.rus.$error"
             class="w-full mb-2"
             id="rus-add-input"
             autocomplete="off"
@@ -153,10 +157,11 @@ watch(
 
     <Popover ref="serbLetterPopOver">
       <div class="flex flex-row gap-3">
-        <serbian-input @set-srb-letter="setSerbLetter" />
+        <serbian-input @set-srb-letter="setSerbLetter" @close="serbLetterPopOver.hide();" />
       </div>
     </Popover>
 
   </div>
 </template>
+
 
