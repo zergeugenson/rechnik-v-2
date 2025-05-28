@@ -2,6 +2,8 @@
 
 ## Автор: Сергей Хромов (sergey@hromov.com)
 
+### vue3, vue-router, pinia, vueuse, primevue, tailwind, vuelidate, vite.
+
 
 ## Project Setup
 

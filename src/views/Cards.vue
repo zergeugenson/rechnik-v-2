@@ -91,32 +91,24 @@ onMounted(() => {
 
 <template>
   <div class="cards-page mt-3">
-    <div class="control-bar text-sm flex">
+    <div class="relative text-sm flex">
       <span>Язык:</span>
       <span
         @click="setLanguage('rus')"
-        :class="[
-          'control-bar__button',
-          'text-button',
-          { disabled: questionLanguage === 'rus' },
-        ]"
+        :class="['text-button', { disabled: questionLanguage === 'rus' }]"
         >русский</span
       >
       <span>|</span>
       <span
         @click="setLanguage('srb')"
-        :class="[
-          'control-bar__button',
-          'text-button',
-          { disabled: questionLanguage === 'srb' },
-        ]"
+        :class="['text-button', { disabled: questionLanguage === 'srb' }]"
         >сербский</span
       >
     </div>
 
     <ProgressSpinner
       v-show="startNewSession"
-      class="card-body__picture-is-buisy"
+      class="cards-page__progress-spinner"
       strokeWidth="3"
       fill="transparent"
       animationDuration="3s"
@@ -124,7 +116,7 @@ onMounted(() => {
     />
 
     <div
-      class="card-body mt-3"
+      class="card-body flex flex-col items-center w-full mt-3"
       v-if="visualDictionary && visualDictionary.length && !startNewSession"
     >
       <div class="card-body__picture">
@@ -153,7 +145,7 @@ onMounted(() => {
         }}</span>
       </div>
 
-      <div class="card-body__controls mt-3">
+      <div class="card-body__controls mt-3 text-center">
         <Button
           @click="userResponse(false)"
           class="default mr-2"
@@ -189,14 +181,12 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .cards-page {
-  .control-bar {
-    position: relative;
+  &__progress-spinner {
+    position: absolute;
+    top: calc(50% - 50px);
+    left: calc(50% - 50px);
   }
   .card-body {
-    display: flex;
-    width: 100%;
-    align-items: center;
-    flex-direction: column;
     &__picture {
       position: relative;
       aspect-ratio: 1 / 1;
@@ -225,16 +215,10 @@ onMounted(() => {
       left: 0;
       z-index: 1;
     }
-    &__picture-is-buisy {
-      position: absolute;
-      top: calc(50% - 50px);
-      left: calc(50% - 50px);
-    }
     &__reply {
       padding: 0.3rem;
     }
     &__controls {
-      text-align: center;
       button {
         width: 120px;
         &.button-hide {

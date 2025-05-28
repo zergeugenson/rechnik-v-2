@@ -3,6 +3,7 @@ import { computed, onMounted, ref, nextTick } from "vue";
 import { useGlobalStore } from "@/stores/global";
 import SerbianInput from "@/components/SerbianInput.vue";
 import type { Dictionary } from "@/interfaces/interfaces";
+import { FilterMatchMode } from "@primevue/core/api";
 
 const tableField = [
   { field: "srb", header: "По-сербски" },
@@ -83,6 +84,12 @@ const HideWord = async (id) => {
 onMounted(() => {
   globalStore.getFullDictionary();
 });
+
+const wordFilters = ref({
+  srb: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  rus: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+});
 </script>
 
 <template>
@@ -93,6 +100,9 @@ onMounted(() => {
     :rows="25"
     class="mt-4"
     :rowStyle="rowStyle"
+    v-model:filters="wordFilters"
+    filterDisplay="row"
+    :globalFilterFields="['srb', 'rus']"
   >
     <Column
       v-for="column of tableField"
@@ -118,6 +128,17 @@ onMounted(() => {
               data[column.field] = e.target.value;
             }
           "
+        />
+      </template>
+      <template
+        #filter="{ filterModel, filterCallback }"
+        v-if="column.field === 'srb' || column.field === 'rus'"
+      >
+        <InputText
+          v-model="filterModel.value"
+          type="text"
+          @input="filterCallback()"
+          placeholder="Search by name"
         />
       </template>
     </Column>

@@ -6,20 +6,21 @@ const props = defineProps({
   header: { type: String, default: "" },
   rootClass: { type: String, default: "" },
 });
-const cols = computed(() => {
+
+const grammarRules = computed(() => {
   return props?.data[0]?.length;
 });
 </script>
 
 <template>
   <table
-    v-if="cols"
+    v-if="grammarRules"
     :class="['gr-table', [rootClass]]"
     class="mt-3 w-full max-w-200 mx-auto border-0 border-collapse"
   >
     <tbody>
       <tr>
-        <th :colspan="cols" v-html="header" />
+        <th :colspan="grammarRules" v-html="header" />
       </tr>
       <tr v-for="(row, rowindex) in data" :key="'table-row-' + rowindex">
         <td
@@ -32,26 +33,6 @@ const cols = computed(() => {
     </tbody>
   </table>
 </template>
-
-<style lang="scss">
-table.gr-table tr td {
-  span {
-    background: $yellow;
-    padding: 0 3px;
-  }
-  p {
-    background: $red;
-    display: inline;
-    color: $white;
-    padding: 0 3px;
-  }
-}
-table.gr-table tr th {
-  b {
-    font-weight: 700;
-  }
-}
-</style>
 
 <style scoped lang="scss">
 table {
@@ -83,6 +64,26 @@ table {
     th {
       background: $margenta;
     }
+  }
+}
+</style>
+
+<style lang="scss">
+table.gr-table tr td {
+  span {
+    background: $yellow;
+    padding: 0 3px;
+  }
+  p {
+    background: $red;
+    display: inline;
+    color: $white;
+    padding: 0 3px;
+  }
+}
+table.gr-table tr th {
+  b {
+    font-weight: 700;
   }
 }
 </style>

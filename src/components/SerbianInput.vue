@@ -1,5 +1,3 @@
-// содержимое поп-апа со специальными сербскими буквами
-
 <script setup lang="ts">
 import { defineEmits, defineProps } from "vue";
 
@@ -15,7 +13,7 @@ defineProps({
     @click="emit('close')"
     icon="pi pi-times"
     severity="secondary"
-    class="helper__close-button"
+    class="close-button"
     rounded
   />
   <Button
@@ -29,7 +27,7 @@ defineProps({
 </template>
 
 <style lang="scss" scoped>
-.helper__close-button {
+.close-button {
   position: absolute !important;
   right: -10px;
   top: -10px;
