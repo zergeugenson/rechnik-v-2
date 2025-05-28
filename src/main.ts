@@ -22,6 +22,8 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import ColumnGroup from "primevue/columngroup";
 import Row from "primevue/row";
+import IconField from "primevue/iconfield";
+import InputIcon from "primevue/inputicon";
 
 const app = createApp(App);
 
@@ -47,6 +49,8 @@ app.component("DataTable", DataTable);
 app.component("Column", Column);
 app.component("ColumnGroup", ColumnGroup);
 app.component("Row", Row);
+app.component("IconField", IconField);
+app.component("InputIcon", InputIcon);
 import StyleClass from "primevue/styleclass";
 
 app.directive("styleclass", StyleClass);

@@ -86,8 +86,6 @@ onMounted(() => {
 });
 
 const wordFilters = ref({
-  srb: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  rus: { value: null, matchMode: FilterMatchMode.CONTAINS },
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 </script>
@@ -101,9 +99,19 @@ const wordFilters = ref({
     class="mt-4"
     :rowStyle="rowStyle"
     v-model:filters="wordFilters"
-    filterDisplay="row"
     :globalFilterFields="['srb', 'rus']"
   >
+    <template #header>
+      <IconField>
+        <InputIcon>
+          <i class="pi pi-search" />
+        </InputIcon>
+        <InputText
+          v-model="wordFilters['global'].value"
+          placeholder="Global Search"
+        />
+      </IconField>
+    </template>
     <Column
       v-for="column of tableField"
       :key="column.header"
@@ -128,17 +136,6 @@ const wordFilters = ref({
               data[column.field] = e.target.value;
             }
           "
-        />
-      </template>
-      <template
-        #filter="{ filterModel, filterCallback }"
-        v-if="column.field === 'srb' || column.field === 'rus'"
-      >
-        <InputText
-          v-model="filterModel.value"
-          type="text"
-          @input="filterCallback()"
-          placeholder="Search by name"
         />
       </template>
     </Column>
