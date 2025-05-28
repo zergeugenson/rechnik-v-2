@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, nextTick } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useGlobalStore } from "@/stores/global";
 import SerbianInput from "@/components/SerbianInput.vue";
 import type { Dictionary } from "@/interfaces/interfaces";
@@ -10,10 +10,15 @@ const tableField = [
   { field: "rus", header: "По-русски" },
   { field: "eng", header: "Картинка" },
 ];
+const wordFilters = ref({
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+});
+
 const globalStore = useGlobalStore();
 const currentInputField = ref<string>();
 const cursorPosition = ref<number>();
 const serbLetterPopOver = ref();
+const backupWordForCancelEditMobile = ref<Dictionary>({}); // На мобилах отсутствует кнопка 'Escape' и нельзя отменить редактирование ячейки
 const elementRefs: { [key: string]: any } = {};
 const allWords = computed<Dictionary[]>(() => {
   return globalStore.allWords;
@@ -26,11 +31,8 @@ const setFieldRefs = (el: HTMLElement, id: string, model: any) => {
 };
 
 const toggleSerbLetterPopOver = (name: string, e: Event) => {
-  serbLetterPopOver.value.hide(e);
   if (name !== "srb") return;
-  nextTick(() => {
-    serbLetterPopOver.value.show(e);
-  });
+  serbLetterPopOver.value.show(e);
 };
 const onBlur = (value: string) => {
   currentInputField.value = value;
@@ -55,6 +57,19 @@ const rowStyle = (data) => {
   if (data.hidden) {
     return { background: "#f9f9f9" };
   }
+};
+
+const onCellEditComplete = (event) => {
+  serbLetterPopOver.value.hide(event);
+  let { data, newValue, field } = event;
+  if (event.value !== event.newValue) {
+    data[field] = newValue;
+    EditWord(data);
+  }
+};
+
+const backupCellEditWord = (event) => {
+  backupWordForCancelEditMobile.value = event.data;
 };
 
 const DeleteWord = async (word) => {
@@ -84,10 +99,6 @@ const HideWord = async (id) => {
 onMounted(() => {
   globalStore.getFullDictionary();
 });
-
-const wordFilters = ref({
-  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-});
 </script>
 
 <template>
@@ -100,6 +111,9 @@ const wordFilters = ref({
     :rowStyle="rowStyle"
     v-model:filters="wordFilters"
     :globalFilterFields="['srb', 'rus']"
+    editMode="cell"
+    @cell-edit-complete="onCellEditComplete"
+    @cell-edit-init="backupCellEditWord"
   >
     <template #header>
       <IconField>
@@ -119,27 +133,40 @@ const wordFilters = ref({
       :header="column.header"
       sortable
     >
-      <template #body="{ data, index }">
-        <InputText
-          type="text"
-          v-model="data[column.field]"
-          size="small"
-          class="w-full"
-          :style="{ background: data.hidden ? 'transparent' : 'white' }"
-          @click="(event) => toggleSerbLetterPopOver(column.field, event)"
-          :ref="
-            (el) => setFieldRefs(el, column.field + index, data[column.field])
-          "
-          @blur="
-            (e) => {
-              onBlur(column.field + index);
-              data[column.field] = e.target.value;
-            }
-          "
-        />
+      <template #body="{ data }">
+        {{ data[column.field] }}
+      </template>
+      <template #editor="{ data, field }">
+        <div class="relative">
+          <InputText
+            v-model="data[field]"
+            autofocus
+            fluid
+            :style="{
+              background: data.hidden ? 'transparent' : 'white',
+              'padding-right': '2.5rem',
+            }"
+            @focus="(event) => toggleSerbLetterPopOver(column.field, event)"
+            :ref="(el) => setFieldRefs(el, column.field, data[column.field])"
+            @blur="
+              (e) => {
+                onBlur(column.field);
+                data[column.field] = e.target.value;
+              }
+            "
+          />
+          <Button
+            @click="data[field] = backupWordForCancelEditMobile[field]"
+            icon="pi pi-times"
+            severity="secondary"
+            rounded
+            aria-label="Cancel"
+            class="edit-cancel-button"
+          />
+        </div>
       </template>
     </Column>
-    <Column field="actions" header="Действия" class="w-[14rem]">
+    <Column field="actions" header="Действия" class="w-[11rem]">
       <template #body="{ data }">
         <Button
           @click="DeleteWord(data)"
@@ -148,14 +175,6 @@ const wordFilters = ref({
           severity="danger"
         >
           Delete
-        </Button>
-        <Button
-          @click="EditWord(data)"
-          class="mr-2 mb-1"
-          size="small"
-          severity="info"
-        >
-          Edit
         </Button>
         <Button
           @click="HideWord(data.id)"
@@ -177,3 +196,22 @@ const wordFilters = ref({
     </div>
   </Popover>
 </template>
+
+<style lang="scss" scoped>
+.edit-cancel-button {
+  position: absolute !important;
+  right: 0.5rem;
+  top: 0.5rem;
+  z-index: 1;
+  font-size: 0.75rem;
+  height: 25px !important;
+  width: 25px !important;
+  border: 1px solid rgb(203, 213, 225);
+  :deep(.pi) {
+    font-size: 0.75rem !important;
+  }
+  @include fdesk {
+    display: none;
+  }
+}
+</style>

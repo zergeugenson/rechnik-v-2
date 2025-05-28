@@ -190,6 +190,7 @@ watch(
         <serbian-input
           @set-srb-letter="setSerbLetter"
           @close="serbLetterPopOver.hide()"
+          show-close-button
         />
       </div>
     </Popover>

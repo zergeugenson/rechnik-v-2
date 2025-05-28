@@ -3,7 +3,7 @@ import { defineEmits, defineProps } from "vue";
 
 const emit = defineEmits(["setSrbLetter", "close"]);
 defineProps({
-  showCloseButton: { type: Boolean, default: true },
+  showCloseButton: { type: Boolean, default: false },
 });
 </script>
 
