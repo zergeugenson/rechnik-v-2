@@ -15,16 +15,18 @@ const wordFilters = ref({
 });
 
 const globalStore = useGlobalStore();
-const currentInputField = ref<string>();
-const cursorPosition = ref<number>();
+const currentInputField = ref<string>("");
+const cursorPosition = ref<number>(0);
 const serbLetterPopOver = ref();
-const backupWordForCancelEditMobile = ref<Dictionary>({}); // На мобилах отсутствует кнопка 'Escape' и нельзя отменить редактирование ячейки
+const backupWordForCancelEditMobile = ref<{
+  [key: string]: string | number | boolean;
+}>({}); // На мобилах отсутствует кнопка 'Escape' и нельзя отменить редактирование ячейки
 const elementRefs: { [key: string]: any } = {};
 const allWords = computed<Dictionary[]>(() => {
   return globalStore.allWords;
 });
 
-const setFieldRefs = (el: HTMLElement, id: string, model: any) => {
+const setFieldRefs = (el: any, id: string, model: any) => {
   if (el && id) {
     elementRefs[id] = { element: el, data: model };
   }
@@ -53,13 +55,13 @@ const setSerbLetter = (letter: string) => {
   }, 10);
 };
 
-const rowStyle = (data) => {
+const rowStyle = (data: any) => {
   if (data.hidden) {
     return { background: "#f9f9f9" };
   }
 };
 
-const onCellEditComplete = (event) => {
+const onCellEditComplete = (event: any) => {
   serbLetterPopOver.value.hide(event);
   let { data, newValue, field } = event;
   if (event.value !== event.newValue) {
@@ -68,12 +70,14 @@ const onCellEditComplete = (event) => {
   }
 };
 
-const backupCellEditWord = (event) => {
+const backupCellEditWord = (event: any) => {
   backupWordForCancelEditMobile.value = event.data;
 };
 
-const DeleteWord = async (word) => {
-  globalStore.allWords = globalStore.allWords.filter((w) => w.id !== word.id);
+const DeleteWord = async (word: Dictionary) => {
+  globalStore.allWords = globalStore.allWords.filter(
+    (w: Dictionary) => w.id !== word.id,
+  );
   const successadd = await globalStore.saveDictionary();
   if (!successadd?.length) console.error("Ошибка: словварь не записан");
 };
@@ -86,8 +90,8 @@ const EditWord = async (word: Dictionary) => {
   if (!successadd?.length) console.error("Ошибка: словварь не записан");
 };
 
-const HideWord = async (id) => {
-  globalStore.allWords.forEach((word) => {
+const HideWord = async (id: number) => {
+  globalStore.allWords.forEach((word: Dictionary) => {
     if (word.id === id) {
       word.hidden = !word.hidden;
     }
@@ -149,9 +153,9 @@ onMounted(() => {
             @focus="(event) => toggleSerbLetterPopOver(column.field, event)"
             :ref="(el) => setFieldRefs(el, column.field, data[column.field])"
             @blur="
-              (e) => {
+              (e: any) => {
                 onBlur(column.field);
-                data[column.field] = e.target.value;
+                data[column.field] = e?.target?.value;
               }
             "
           />

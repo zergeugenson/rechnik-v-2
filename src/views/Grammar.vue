@@ -2,10 +2,9 @@
 import { computed, onMounted } from "vue";
 import { useGlobalStore } from "@/stores/global";
 import GrTable from "@/components/GrTable.vue";
-import type { Grammar } from "@/interfaces/interfaces";
 
 const globalStore = useGlobalStore();
-const grammar: Grammar = computed(() => {
+const grammar = computed(() => {
   return globalStore.grammarRules;
 });
 

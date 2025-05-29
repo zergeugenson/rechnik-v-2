@@ -7,7 +7,7 @@ import type { Dictionary } from "@/interfaces/interfaces";
 
 const globalStore = useGlobalStore();
 
-const visualDictionary = ref<Dictionary[]>([]);
+const visualDictionary = ref<any>([]);
 
 const funnyPictureSrc = ref<string>("");
 const questionLanguage = ref<string>("srb");
@@ -69,7 +69,8 @@ const userResponse = (rightAnswer: boolean) => {
 };
 
 async function hideWord(id: number) {
-  delete visualDictionary.value.splice(0, 1);
+  if (!id) return;
+  visualDictionary?.value?.splice(0, 1);
   globalStore.allWords.forEach((word: Dictionary) => {
     if (word.id === id) {
       word.hidden = true;
@@ -135,7 +136,7 @@ onMounted(() => {
       </div>
 
       <div class="text-base mt-3 text-center">
-        {{ ucFirst(serbianLC(visualDictionary[0][currentLanguage])) }}
+        {{ ucFirst(serbianLC(visualDictionary[0][currentLanguage] || "")) }}
       </div>
       <div class="card-body__reply text-base text-center font-bold mt-3 mb-3">
         <span>{{

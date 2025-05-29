@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { watch, ref, nextTick } from "vue";
 import { useToast } from "primevue/usetoast";
-import { useGlobalStore } from "@/stores/global";
+import { useGlobalStore } from "@/stores/global.ts";
 import SerbianInput from "@/components/SerbianInput.vue";
 import { serbianLC } from "@/common/functions.js";
 import { required } from "@vuelidate/validators";
@@ -37,17 +37,17 @@ const addWordPopOver = ref();
 const serbianInputField = ref();
 const toast = useToast();
 
-const cursorPosition = ref<number>();
+const cursorPosition = ref<number>(0);
 const addWordValidate: any = useVuelidate(addWordRules, inputNewWord);
 
-const toggleSerbLetterPopOver = (e) => {
+const toggleSerbLetterPopOver = (e: any) => {
   serbLetterPopOver.value.hide(e);
   nextTick(() => {
     serbLetterPopOver.value.show(e);
   });
 };
 
-const setSerbLetter = (l) => {
+const setSerbLetter = (l: string) => {
   const elem = serbianInputField.value;
   elem.$el.focus();
   elem.d_value =
@@ -62,11 +62,12 @@ const setSerbLetter = (l) => {
   }, 10);
 };
 
-const onBlur = () => {
+const onBlur = (e: any) => {
   cursorPosition.value = serbianInputField.value.$el.selectionStart;
+  inputNewWord.value.srb = e?.target?.value;
 };
 
-const toggleaddWordPopOver = (e) => {
+const toggleaddWordPopOver = (e: any) => {
   addWordValidate.value.$reset();
   inputNewWord.value = { srb: "", rus: "", eng: "" };
   addWordPopOver.value.toggle(e);
@@ -91,7 +92,7 @@ async function submitNewWord() {
 
 watch(
   () => globalStore.showMessage,
-  (message) => {
+  (message: any) => {
     toast.add(message);
   },
 );
@@ -138,12 +139,7 @@ watch(
           v-model="inputNewWord.srb"
           :invalid="addWordValidate.srb.$error"
           @click="toggleSerbLetterPopOver"
-          @blur="
-            (e) => {
-              onBlur();
-              inputNewWord.srb = e.target.value;
-            }
-          "
+          @blur="onBlur"
           class="w-full mb-2"
           id="srb-add-input"
           ref="serbianInputField"

@@ -10,7 +10,7 @@ function isNotEmpty(obj: any) {
   return obj && typeof obj === "object" && Object.keys(obj).length !== 0;
 }
 
-const ucFirst = (str: string) => {
+const ucFirst = (str: string | undefined) => {
   if (!str) return str;
   return str[0].toUpperCase() + str.slice(1);
 };
@@ -29,9 +29,10 @@ const shaffleArray = (array: any) => {
   return array;
 };
 
-const serbianLC = (str: string) => {
+const serbianLC = (str: string | undefined) => {
+  if (!str) return;
   // 2DO: Это legasy. Можно убрать отовсюду из кода после вычистки базы
-  return Array.from(str).reduce((word, letter) => {
+  return Array.from(str).reduce((word: string, letter: string) => {
     switch (letter) {
       case "C":
         letter = "ć";

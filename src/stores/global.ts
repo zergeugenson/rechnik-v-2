@@ -4,9 +4,9 @@ import { shaffleArray } from "@/common/functions.js";
 import useFetch from "@/api/myFetsh";
 import type { Dictionary, Grammar } from "@/interfaces/interfaces";
 
-export const baseURL: string = !import.meta.env.DEV
-  ? "http://localhost:5173"
-  : "http://pda.hromov.com/assets"; //window.location.origin;
+export const apiURL: string = import.meta.env.VITE_API_URL
+  ? import.meta.env.VITE_API_URL
+  : window.location.origin + "/assets";
 const wordsInSecssion: number = 25;
 
 export const useGlobalStore = defineStore("global", () => {
@@ -17,7 +17,7 @@ export const useGlobalStore = defineStore("global", () => {
 
   // Actions
   async function getFullDictionary() {
-    const { data, statusCode } = await useFetch(`${baseURL}/data.json`, {
+    const { data, statusCode } = await useFetch(`${apiURL}/data.json`, {
       immediate: true,
     })
       .get()
@@ -36,7 +36,7 @@ export const useGlobalStore = defineStore("global", () => {
   }
 
   async function getGrammar() {
-    const { data, statusCode } = await useFetch(`${baseURL}/grammar.json`, {
+    const { data, statusCode } = await useFetch(`${apiURL}/grammar.json`, {
       immediate: true,
     })
       .get()
@@ -55,9 +55,8 @@ export const useGlobalStore = defineStore("global", () => {
   }
 
   async function saveDictionary() {
-    const { data, statusCode } = await useFetch(`${baseURL}/replace.php`, {
+    const { data, statusCode } = await useFetch(`${apiURL}/replace.php`, {
       immediate: true,
-      headers: { "Content-type": "application/json; charset=UTF-8" },
     })
       .post(JSON.stringify(allWords.value))
       .json();
@@ -72,7 +71,7 @@ export const useGlobalStore = defineStore("global", () => {
     return data.value;
   }
 
-  const setIsAdding = (value) => {
+  const setIsAdding = (value: boolean) => {
     isAdding.value = value;
   };
 
@@ -80,10 +79,9 @@ export const useGlobalStore = defineStore("global", () => {
 
   const getDictionary = () => {
     return (
-      shaffleArray(allWords?.value.filter((word) => !word.hidden)).slice(
-        0,
-        wordsInSecssion,
-      ) || []
+      shaffleArray(
+        allWords?.value.filter((word: Dictionary) => !word.hidden),
+      ).slice(0, wordsInSecssion) || []
     );
   };
 

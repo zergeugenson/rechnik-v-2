@@ -1,29 +1,29 @@
 interface Dictionary {
-  rus: string;
-  srb: string;
-  eng: string;
-  id: number;
-  hidden: boolean;
+  rus?: string | undefined;
+  srb?: string | undefined;
+  eng?: string | undefined;
+  id?: number | undefined;
+  hidden?: boolean | undefined;
 }
 
-interface wordConstruct {
-  data: string[];
-  header: string;
+interface WordConstruct {
+  data?: string[];
+  header?: string;
 }
 
 interface Grammar {
-  glagola: {
-    paju: wordConstruct;
-    peu: wordConstruct;
-    pie: wordConstruct;
+  glagola?: {
+    paju?: WordConstruct;
+    peu?: WordConstruct;
+    pie?: WordConstruct;
   };
-  padez: {
-    akuzativ: wordConstruct;
-    dativ: wordConstruct;
-    genetiv: wordConstruct;
-    instrumental: wordConstruct;
-    locativ: wordConstruct;
+  padez?: {
+    akuzativ?: WordConstruct;
+    dativ?: WordConstruct;
+    genetiv?: WordConstruct;
+    instrumental?: WordConstruct;
+    locativ?: WordConstruct;
   };
 }
 
-export type { Dictionary, Grammar };
+export type { Dictionary, Grammar, WordConstruct };

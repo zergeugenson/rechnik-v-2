@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { computed, defineProps } from "vue";
+import { defineProps, computed } from "vue";
 
 const props = defineProps({
-  data: { type: [Array], default: () => [] },
+  data: { type: Object, default: () => {} },
   header: { type: String, default: "" },
   rootClass: { type: String, default: "" },
 });
 
-const grammarRules = computed(() => {
-  return props?.data[0]?.length;
+const grammarRules = computed<number>(() => {
+  return Array.from(props?.data[0])?.length;
 });
 </script>
 
@@ -26,7 +26,7 @@ const grammarRules = computed(() => {
         <td
           v-for="(col, colindex) in row"
           :key="'table-data-' + colindex"
-          :class="{ subhead: rowindex === 0, first: colindex === 0 }"
+          :class="{ subhead: !rowindex, first: !colindex }"
           v-html="col"
         />
       </tr>

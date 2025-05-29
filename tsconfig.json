@@ -1,6 +1,7 @@
 {
   "files": [],
   "compilerOptions": {
+    "useUnknownInCatchVariables": false,
     "allowJs": true,
     "baseUrl": ".",
     "paths": {
@@ -14,5 +15,5 @@
       "es2017"
     ]
   },
-  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./tsconfig.app.json" }]
 }
